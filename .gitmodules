@@ -1,0 +1,3 @@
+[submodule "thirdparty/allwpilib"]
+	path = thirdparty/allwpilib
+	url = https://github.com/wpilibsuite/allwpilib
