@@ -16,8 +16,8 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   list(APPEND THUNDER_DEF_LIST "THUNDER_DEBUG=1")
 endif()
 
-set(THUNDER_SRC_DIR        "${CMAKE_CURRENT_SOURCE_DIR}/src")
-set(THUNDER_INC_DIR        "${CMAKE_CURRENT_SOURCE_DIR}/src")
+set(THUNDER_SRC_DIR        "${CMAKE_CURRENT_SOURCE_DIR}/lib")
+set(THUNDER_INC_DIR        "${CMAKE_CURRENT_SOURCE_DIR}/include")
 set(THUNDER_THIRDPARTY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty")
 
 if(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
@@ -43,11 +43,17 @@ set(WITH_TESTS OFF CACHE BOOL "" FORCE)
 add_subdirectory("${THUNDER_THIRDPARTY_DIR}/allwpilib/wpinet")
 add_subdirectory("${THUNDER_THIRDPARTY_DIR}/allwpilib/wpiutil")
 add_subdirectory("${THUNDER_THIRDPARTY_DIR}/allwpilib/ntcore")
+add_subdirectory("${THUNDER_THIRDPARTY_DIR}/allwpilib/cscore")
+add_subdirectory("${THUNDER_THIRDPARTY_DIR}/allwpilib/cameraserver")
 
 # --- Build ---
 
 add_executable(${PROJECT_NAME} ${THUNDER_SRC})
 
+target_include_directories(${PROJECT_NAME} PUBLIC ${THUNDER_INC_DIR})
+
 target_link_libraries(${PROJECT_NAME} PUBLIC ntcore)
+target_link_libraries(${PROJECT_NAME} PUBLIC cscore)
+target_link_libraries(${PROJECT_NAME} PUBLIC cameraserver)
 
 target_compile_definitions(${PROJECT_NAME} PUBLIC ${THUNDER_DEF_LIST})
