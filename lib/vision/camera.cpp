@@ -1,5 +1,5 @@
-#include <ThunderRPi/vision/camera.h>
-#include <ThunderRPi/thunder_rpi.h>
+#include <RollingRaspberry/vision/camera.h>
+#include <RollingRaspberry/rolling_raspberry.h>
 
 CameraStream::CameraStream(Props _props, cs::VideoSource& vid_src)
 : props(_props), cv_sink(props.name) {
