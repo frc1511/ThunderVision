@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
   NTHandler::MatchMode last_mode = NTHandler::MatchMode::DISABLED;
 
   while (true) {
-    std::chrono::steady_clock::time_point start = std::chrono::high_resolution_clock::now(),
+    std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now(),
                                           end;
 
     NTHandler::MatchMode curr_mode = NTHandler::get()->get_match_mode();

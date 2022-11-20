@@ -3,7 +3,6 @@
 #include <RollingRaspberry/rolling_raspberry.h>
 #include <networktables/NetworkTable.h>
 #include <networktables/NetworkTableInstance.h>
-#include <networktables/TableEntryListener.h>
 
 class NTHandler {
 public:
@@ -52,13 +51,15 @@ public:
   inline nt::NetworkTableInstance get_instance() { return nt_inst; }
   inline std::shared_ptr<nt::NetworkTable> get_smart_dashboard() { return sd_table; }
   inline std::shared_ptr<nt::NetworkTable> get_fms_info() { return fms_table; }
+  // The table used to provide feedback to the robot from the pi.
+  inline std::shared_ptr<nt::NetworkTable> get_rasp_table() { return rasp_table; }
 
 private:
   NTHandler();
   ~NTHandler();
 
   nt::NetworkTableInstance nt_inst;
-  std::shared_ptr<nt::NetworkTable> sd_table, fms_table;
+  std::shared_ptr<nt::NetworkTable> sd_table, fms_table, rasp_table;
 
   std::map<std::string, bool> set_bools;
   std::map<std::string, double> set_doubles;

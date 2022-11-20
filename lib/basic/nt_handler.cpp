@@ -21,8 +21,9 @@ void NTHandler::init() {
   nt_inst = nt::NetworkTableInstance::GetDefault();
   sd_table = nt_inst.GetTable("SmartDashboard");
   fms_table = nt_inst.GetTable("FMSInfo");
-
-  nt_inst.StartClientTeam(1511);
+  
+  nt_inst.StartClient4("RollingRaspberry");
+  nt_inst.SetServerTeam(1511);
 }
 
 NTHandler::MatchMode NTHandler::get_match_mode() {
