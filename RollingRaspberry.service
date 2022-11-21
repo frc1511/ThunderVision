@@ -1,0 +1,10 @@
+[Unit]
+Description=1511 Rolling Raspberry Service
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/RollingRaspberry
+Restart=on-failure
+RestartSec=10
+KillMode=process
+[Install]
+WantedBy=multi-user.target
