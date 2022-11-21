@@ -40,11 +40,11 @@ set(WPILIB_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
 set(WITH_JAVA OFF CACHE BOOL "" FORCE)
 set(WITH_TESTS OFF CACHE BOOL "" FORCE)
 
-add_subdirectory("${THUNDER_THIRDPARTY_DIR}/allwpilib/wpinet")
-add_subdirectory("${THUNDER_THIRDPARTY_DIR}/allwpilib/wpiutil")
-add_subdirectory("${THUNDER_THIRDPARTY_DIR}/allwpilib/ntcore")
-add_subdirectory("${THUNDER_THIRDPARTY_DIR}/allwpilib/cscore")
-add_subdirectory("${THUNDER_THIRDPARTY_DIR}/allwpilib/cameraserver")
+add_subdirectory("${THUNDER_THIRDPARTY_DIR}/allwpilib/wpinet" EXCLUDE_FROM_ALL)
+add_subdirectory("${THUNDER_THIRDPARTY_DIR}/allwpilib/wpiutil" EXCLUDE_FROM_ALL)
+add_subdirectory("${THUNDER_THIRDPARTY_DIR}/allwpilib/ntcore" EXCLUDE_FROM_ALL)
+add_subdirectory("${THUNDER_THIRDPARTY_DIR}/allwpilib/cscore" EXCLUDE_FROM_ALL)
+add_subdirectory("${THUNDER_THIRDPARTY_DIR}/allwpilib/cameraserver" EXCLUDE_FROM_ALL)
 
 # --- Build ---
 
@@ -57,3 +57,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC cscore)
 target_link_libraries(${PROJECT_NAME} PUBLIC cameraserver)
 
 target_compile_definitions(${PROJECT_NAME} PUBLIC ${THUNDER_DEF_LIST})
+
+# --- Install ---
+
+install(TARGETS ${PROJECT_NAME})

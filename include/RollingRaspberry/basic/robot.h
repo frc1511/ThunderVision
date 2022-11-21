@@ -1,7 +1,12 @@
 #pragma once
 
+#include <RollingRaspberry/rolling_raspberry.h>
+
 class Robot {
 public:
+  void robot_init();
+  void robot_process();
+
   void auto_init();
   void auto_process();
   

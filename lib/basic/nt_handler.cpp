@@ -21,6 +21,7 @@ void NTHandler::init() {
   nt_inst = nt::NetworkTableInstance::GetDefault();
   sd_table = nt_inst.GetTable("SmartDashboard");
   fms_table = nt_inst.GetTable("FMSInfo");
+  rasp_table = nt_inst.GetTable("RollingRaspberry");
   
   nt_inst.StartClient4("RollingRaspberry");
   nt_inst.SetServerTeam(1511);
@@ -28,7 +29,7 @@ void NTHandler::init() {
 
 NTHandler::MatchMode NTHandler::get_match_mode() {
   int32_t ctrl_word_int = get_ctrl_word();
-
+  
   HAL_ControlWord ctrl_word;
   std::memcpy(&ctrl_word, &ctrl_word_int, sizeof(ctrl_word));
 
