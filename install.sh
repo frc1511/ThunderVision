@@ -20,11 +20,14 @@ cmake --install $SCRIPT_DIR/build
 # Install the systemd service.
 cp $SCRIPT_DIR/RollingRaspberry.service /etc/systemd/system/RollingRaspberry.service
 
+# Reload the daemon.
+systemctl daemon-reload
+
 # Enable the systemd service.
 while true; do
   read -p 'Enable and start the systemd service? ' yn
   case $yn in
-    [Yy]* ) systemctl daemon-reload && systemctl enable RollingRaspberry.service && systemctl start RollingRaspberry.service; break;;
+    [Yy]* ) systemctl enable RollingRaspberry.service && systemctl start RollingRaspberry.service; break;;
     [Nn]* ) break;;
     * ) echo 'Please answer y or n';;
   esac
