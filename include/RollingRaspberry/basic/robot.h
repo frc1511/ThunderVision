@@ -1,6 +1,7 @@
 #pragma once
 
 #include <RollingRaspberry/rolling_raspberry.h>
+#include <RollingRaspberry/config/settings.h>
 
 class Robot {
 public:
@@ -20,5 +21,5 @@ public:
   void test_process();
   
 private:
-
+  Settings settings;
 };

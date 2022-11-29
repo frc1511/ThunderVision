@@ -93,3 +93,6 @@ _deps
 
 # Build dir
 [Bb]uild/
+
+# Config file
+include/RollingRaspberry/config/config.h"

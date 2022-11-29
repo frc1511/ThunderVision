@@ -12,20 +12,31 @@ if [ ! $(uname -o) = 'GNU/Linux' ] || [ ! $(uname -m) = 'armv7l' ]; then
   exit 1
 fi
 
-SCRIPT_DIR=$(realpath $(dirname $BASH_SOURCE))
+PROJECT_DIR=$(realpath $(dirname $BASH_SOURCE))/..
+
+echo "Installing program 'RollingRaspberry'"
 
 # Install the program.
-cmake --install $SCRIPT_DIR/build
+cmake --install $PROJECT_DIR/build
+
+echo "Installing the configuration json 'RollingRaspberryConfig.json' to '/boot/RollingRaspberryConfig.json'"
+
+# Install the config file.
+cp $PROJECT_DIR/RollingRaspberryConfig.json /boot/RollingRaspberryConfig.json
+
+echo "Installing the systemd service 'RollingRaspberry.service'"
 
 # Install the systemd service.
-cp $SCRIPT_DIR/RollingRaspberry.service /etc/systemd/system/RollingRaspberry.service
+cp $PROJECT_DIR/RollingRaspberry.service /etc/systemd/system/RollingRaspberry.service
+
+echo 'Reloading the systemd daemon'
 
 # Reload the daemon.
 systemctl daemon-reload
 
 # Enable the systemd service.
 while true; do
-  read -p 'Enable and start the systemd service? ' yn
+  read -p 'Enable and start the systemd service? (y/n) ' yn
   case $yn in
     [Yy]* ) systemctl enable RollingRaspberry.service && systemctl start RollingRaspberry.service; break;;
     [Nn]* ) break;;

@@ -1,0 +1,30 @@
+{
+  "usb_cameras" : [ {
+    "dev" : 0,
+    "props" : {
+      "name" : "intake_camera",
+      "width" : 320,
+      "height" : 240,
+      "fps" : 30,
+      "position" : {
+        "x" : 0,
+        "y" : 0,
+        "z" : 0
+      }
+    }
+  } ],
+  "mjpg_cameras" : [ {
+    "url" : "http://limelight-homer.local:5800/stream.mjpg",
+    "props" : {
+      "name" : "limelight_camera",
+      "width" : 320,
+      "height" : 240,
+      "fps" : 30,
+      "position" : {
+        "x" : 0,
+        "y" : 0,
+        "z" : 0
+      }
+    }
+  } ]
+}

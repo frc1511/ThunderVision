@@ -1,0 +1,3 @@
+#pragma once
+
+#define THUNDER_CONFIG_JSON_PATH "@CONFIG_JSON_PATH@"
