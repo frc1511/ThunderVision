@@ -1,6 +1,7 @@
 {
   "usb_cameras" : [ {
     "dev" : 0,
+    "host_stream" : true,
     "props" : {
       "name" : "intake_camera",
       "width" : 320,

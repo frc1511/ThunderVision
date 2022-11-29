@@ -1,7 +1,5 @@
 #pragma once
 
-#include <RollingRaspberry/vision/camera.h>
-
 class Vision {
 public:
   Vision();
@@ -10,6 +8,4 @@ public:
   void process();
   
 private:
-  USBCameraStream intake_stream { 0, { "intake_camera" } };
-  MJPGCameraStream limelight_stream { "http://limelight-homer.local:5800/stream.mjpg", { "limelight" } };
 };

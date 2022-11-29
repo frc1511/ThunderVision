@@ -19,6 +19,8 @@ void from_json(const wpi::json& json, CameraProps& props) {
   props.pos    = json.at("position").get<frc::Translation3d>();
 }
 
+// --- CameraStream ---
+
 CameraStream::CameraStream(CameraProps _props, cs::VideoSource& vid_src)
 : props(_props), cv_sink(props.name) {
   vid_src.SetResolution(props.width, props.height);
@@ -37,6 +39,8 @@ void CameraStream::set_props(CameraProps _props) {
 CameraProps CameraStream::get_props() {
   return props;
 }
+
+// --- USBCameraStream ---
 
 USBCameraStream::USBCameraStream(int dev, CameraProps _props)
   : usb_camera(frc::CameraServer::StartAutomaticCapture(_props.name, [&]() -> int {
@@ -61,6 +65,8 @@ void USBCameraStream::host_stream() {
   
   frc::CameraServer::PutVideo(props.name, props.width, props.height);
 }
+
+// --- MJPGCameraStream ---
 
 MJPGCameraStream::MJPGCameraStream(std::string url, CameraProps _props)
 : http_camera(_props.name, url, cs::HttpCamera::HttpCameraKind::kMJPGStreamer),
