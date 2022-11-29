@@ -20,18 +20,18 @@ git submodule update
 
 To install the required dependicies, run the `setup.sh` script as root.
 ```
-sudo ./setup.sh
+sudo ./scripts/setup.sh
 ```
 
 To build the application, run the `build.sh` script.
 ```
-./build.sh
+./scripts/build.sh
 ```
 
 ## Installing Service
 To install the application, run the `install.sh` script as root. When prompted to enable the systemd service, select yes.
 ```
-sudo ./install.sh
+sudo ./scipts/install.sh
 ```
 Now the application will be installed on the Pi and will start up at boot.
 

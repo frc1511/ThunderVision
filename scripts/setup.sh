@@ -16,7 +16,8 @@ fi
 sudo apt-get update && sudo apt-get install -y --no-install-recommends \
   make \
   cmake \
-  libopencv-dev
+  libopencv-dev \
+  libeigen3-dev
 
 pip3 install jinja2
 
