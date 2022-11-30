@@ -2,6 +2,8 @@
 
 #include <RollingRaspberry/rolling_raspberry.h>
 #include <RollingRaspberry/config/settings.h>
+#include <RollingRaspberry/basic/subsystem.h>
+#include <RollingRaspberry/vision/vision.h>
 
 class Robot {
 public:
@@ -22,4 +24,11 @@ public:
   
 private:
   Settings settings;
+  Vision vision { settings };
+
+  std::vector<Subsystem*> subsystems {
+    &vision
+  };
+
+  void reset(NTHandler::MatchMode mode);
 };
