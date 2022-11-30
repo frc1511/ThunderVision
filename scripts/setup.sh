@@ -17,7 +17,9 @@ sudo apt-get update && sudo apt-get install -y --no-install-recommends \
   make \
   cmake \
   libopencv-dev \
-  libeigen3-dev
+  libeigen3-dev \
+  libapriltag-dev
 
 pip3 install jinja2
+pip3 install numpy
 

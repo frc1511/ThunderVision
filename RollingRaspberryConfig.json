@@ -7,10 +7,16 @@
       "width" : 320,
       "height" : 240,
       "fps" : 30,
+      "fov" : 68.5,
       "position" : {
         "x" : 0,
         "y" : 0,
         "z" : 0
+      },
+      "rotation" : {
+        "roll" : 0,
+        "pitch" : 0,
+        "yaw" : 0
       }
     }
   } ],
@@ -21,10 +27,16 @@
       "width" : 320,
       "height" : 240,
       "fps" : 30,
+      "fov" : 68.5,
       "position" : {
         "x" : 0,
         "y" : 0,
         "z" : 0
+      },
+      "rotation" : {
+        "roll" : 0,
+        "pitch" : 0,
+        "yaw" : 0
       }
     }
   } ]

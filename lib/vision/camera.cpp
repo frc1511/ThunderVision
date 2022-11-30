@@ -7,7 +7,14 @@ void to_json(wpi::json& json, const CameraProps& props) {
     { "width",    props.width },
     { "height",   props.height },
     { "fps",      props.fps },
-    { "position", props.pos }
+    { "fov",      props.fov.value() },
+    { "position", props.pose.Translation() },
+    { "rotation", wpi::json {
+                    { "roll", props.pose.Rotation().X().value() },
+                    { "pitch", props.pose.Rotation().Y().value() },
+                    { "yaw", props.pose.Rotation().Z().value() }
+                  }
+    }
   };
 }
 
@@ -16,7 +23,18 @@ void from_json(const wpi::json& json, CameraProps& props) {
   props.width  = json.at("width").get<std::size_t>();
   props.height = json.at("height").get<std::size_t>();
   props.fps    = json.at("fps").get<std::size_t>();
-  props.pos    = json.at("position").get<frc::Translation3d>();
+  props.fov    = units::degree_t(json.at("fov").get<double>());
+  frc::Translation3d pos = json.at("position").get<frc::Translation3d>();
+
+  wpi::json rot_json = json.at("rotation");
+
+  units::radian_t roll = units::radian_t(rot_json.at("roll").get<double>());
+  units::radian_t pitch = units::radian_t(rot_json.at("pitch").get<double>());
+  units::radian_t yaw = units::radian_t(rot_json.at("yaw").get<double>());
+
+  frc::Rotation3d rot(roll, pitch, yaw);
+
+  props.pose = frc::Pose3d(pos, rot);
 }
 
 // --- CameraStream ---

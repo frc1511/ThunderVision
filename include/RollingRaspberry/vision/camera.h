@@ -6,7 +6,7 @@
 #include <cscore.h>
 #include <cscore_cv.h>
 #include <cscore_oo.h>
-#include <frc/geometry/Translation3d.h>
+#include <frc/geometry/Pose3d.h>
 
 struct CameraProps {
   // The identifier string of the camera.
@@ -19,8 +19,10 @@ struct CameraProps {
   // The fps of the camera.
   std::size_t fps = 30;
   
-  // Position of the camera on the robot.
-  frc::Translation3d pos { 0_m, 0_m, 0_m };
+  // Field of view of the camera.
+  units::degree_t fov = 68.5_deg;
+  
+  frc::Pose3d pose;
 };
 
 void to_json(wpi::json& json, const CameraProps& props);
