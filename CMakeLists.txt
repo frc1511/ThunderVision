@@ -6,14 +6,14 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w")
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release")
 endif()
 
 set(CONFIG_JSON_PATH "/boot/RollingRaspberryConfig.json" CACHE STRING "Config JSON Path")
-option(PREBUILT_WPILIB "Download pre-built WPILib binaries instead of building them" ON)
+option(PREBUILT_WPILIB "Download pre-built WPILib binaries instead of building them" OFF)
 set(PREBUILT_WPILIB_VERSION "2023.1.1-beta-4" CACHE STRING "Version of WPILib pre-built binaries to download")
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
