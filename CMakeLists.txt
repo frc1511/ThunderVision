@@ -96,6 +96,10 @@ else()
   endforeach()
 endif()
 
+# --- AprilTag ---
+
+add_subdirectory("${THUNDER_THIRDPARTY_DIR}/apriltag" EXCLUDE_FROM_ALL)
+
 # --- Build ---
 
 add_executable(${PROJECT_NAME} ${THUNDER_SRC})
@@ -134,6 +138,10 @@ if(NOT Threads_FOUND)
 endif()
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads)
+
+# --- AprilTags ---
+
+target_link_libraries(${PROJECT_NAME} PUBLIC apriltag)
 
 # --- Definitions ---
 

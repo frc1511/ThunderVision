@@ -1,3 +1,6 @@
 [submodule "thirdparty/allwpilib"]
 	path = thirdparty/allwpilib
 	url = https://github.com/wpilibsuite/allwpilib
+[submodule "thirdparty/apriltag"]
+	path = thirdparty/apriltag
+	url = https://github.com/AprilRobotics/apriltag
