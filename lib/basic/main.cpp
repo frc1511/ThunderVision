@@ -69,7 +69,7 @@ int main(int argc, char** argv) {
   }
   
   if (ThunderSignal::status) {
-    fmt::print("\nCaught signal {}, exiting now.\n", ThunderSignal::status);
+    fmt::print("\nFRC1511: Caught signal {}, exiting now.\n", ThunderSignal::status);
   }
   
   return 0;

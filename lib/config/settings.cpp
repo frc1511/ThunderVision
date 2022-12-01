@@ -6,10 +6,10 @@ Settings::Settings() {
   
   wpi::raw_fd_istream cfg_file { THUNDER_CONFIG_JSON_PATH, err_code };
   if (err_code) {
-    std::cerr << "Failed to load Config JSON file at " << THUNDER_CONFIG_JSON_PATH << '\n';
+    fmt::print("FRC1511: Failed to load Config JSON file at {}\n", THUNDER_CONFIG_JSON_PATH);
   }
 
-  std::cout << "Loaded Config JSON file\n";
+  fmt::print("FRC1511: Loaded Config JSON file\n");
   
   wpi::json cfg_json;
   cfg_file >> cfg_json;

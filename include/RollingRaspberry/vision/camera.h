@@ -33,14 +33,25 @@ public:
   CameraStream(CameraProps props, cs::VideoSource& vid_src);
   virtual ~CameraStream();
   
+  enum class Type {
+    USB,
+    MJPG,
+  };
+  
+  virtual Type get_type() = 0;
+  
+  virtual std::string get_desc() = 0;
+  
   void set_props(CameraProps props);
-  CameraProps get_props();
+  const CameraProps& get_props();
   
-  virtual cv::Mat get_frame() = 0;
+  virtual std::uint64_t get_frame(cv::Mat frame);
   
-protected:
   virtual cs::VideoSource& get_video_source() = 0;
   
+  inline virtual cs::CvSource* get_ouput_source() { return nullptr; }
+  
+protected:
   CameraProps props;
   cs::CvSink cv_sink;
 };
@@ -56,7 +67,9 @@ public:
   USBCameraStream(int dev, CameraProps props);
   ~USBCameraStream();
   
-  cv::Mat get_frame() override;
+  inline Type get_type() override { return Type::USB; }
+  
+  inline std::string get_desc() override { return fmt::format("USB Camera (ID: {})", dev); }
   
   cs::VideoSource& get_video_source() override;
   
@@ -67,10 +80,15 @@ public:
    */
   void host_stream();
   
+  inline cs::CvSource* get_ouput_source() override { return hosting_stream ? &output_source : nullptr; }
+  
 private:
   cs::UsbCamera usb_camera;
   
+  int dev;
+  
   bool hosting_stream = false;
+  cs::CvSource output_source;
 };
 
 class MJPGCameraStream : public CameraStream {
@@ -84,10 +102,14 @@ public:
   MJPGCameraStream(std::string url, CameraProps props);
   ~MJPGCameraStream();
   
-  cv::Mat get_frame() override;
+  inline Type get_type() override { return Type::MJPG; }
+  
+  inline std::string get_desc() override { return fmt::format("MJPG Camera Stream (URL: {})", url); }
   
   cs::VideoSource& get_video_source() override;
   
 private:
   cs::HttpCamera http_camera;
+  
+  std::string url;
 };

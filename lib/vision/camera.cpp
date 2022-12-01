@@ -54,48 +54,44 @@ void CameraStream::set_props(CameraProps _props) {
   props = _props;
 }
 
-CameraProps CameraStream::get_props() {
+const CameraProps& CameraStream::get_props() {
   return props;
+}
+
+std::uint64_t CameraStream::get_frame(cv::Mat frame) {
+  return cv_sink.GrabFrame(frame);
 }
 
 // --- USBCameraStream ---
 
-USBCameraStream::USBCameraStream(int dev, CameraProps _props)
+USBCameraStream::USBCameraStream(int _dev, CameraProps _props)
   : usb_camera(frc::CameraServer::StartAutomaticCapture(_props.name, [&]() -> int {
-      return dev;
-    } ())),
+      return _dev;
+    } ())), dev(_dev),
   CameraStream(_props, usb_camera) {
 }
 
 USBCameraStream::~USBCameraStream() = default;
-
-cv::Mat USBCameraStream::get_frame() {
-  
-}
 
 cs::VideoSource& USBCameraStream::get_video_source() {
   return usb_camera;
 }
 
 void USBCameraStream::host_stream() {
-  if (hosting_stream) return;
-  hosting_stream = true;
+  if (output_source) return;
   
-  frc::CameraServer::PutVideo(props.name, props.width, props.height);
+  output_source = frc::CameraServer::PutVideo(props.name, props.width, props.height);
 }
 
 // --- MJPGCameraStream ---
 
-MJPGCameraStream::MJPGCameraStream(std::string url, CameraProps _props)
-: http_camera(_props.name, url, cs::HttpCamera::HttpCameraKind::kMJPGStreamer),
+MJPGCameraStream::MJPGCameraStream(std::string _url, CameraProps _props)
+: http_camera(_props.name, _url, cs::HttpCamera::HttpCameraKind::kMJPGStreamer),
+  url(_url),
   CameraStream(_props, http_camera) {
 }
 
 MJPGCameraStream::~MJPGCameraStream() = default;
-
-cv::Mat MJPGCameraStream::get_frame() {
-  
-}
 
 cs::VideoSource& MJPGCameraStream::get_video_source() {
   return http_camera;
