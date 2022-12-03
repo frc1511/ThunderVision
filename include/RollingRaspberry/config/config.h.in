@@ -1,3 +1,7 @@
 #pragma once
 
-#define THUNDER_CONFIG_JSON_PATH "@CONFIG_JSON_PATH@"
+#include <RollingRaspberry/rolling_raspberry.h>
+
+#define THUNDER_CONFIG_DIR          std::filesystem::path("@CONFIG_JSON_DIR@")
+#define THUNDER_VISION_CONFIG_JSON  (THUNDER_CONFIG_DIR / "vision.json")
+#define THUNDER_FIELD_CONFIG_JSON   (THUNDER_CONFIG_DIR / "field.json")

@@ -1,5 +1,5 @@
 #include <RollingRaspberry/basic/robot.h>
-#include <RollingRaspberry/basic/nt_handler.h>
+#include <RollingRaspberry/network/nt_handler.h>
 
 #include <unistd.h>
 
@@ -69,7 +69,7 @@ int main(int argc, char** argv) {
   }
   
   if (ThunderSignal::status) {
-    fmt::print("\nFRC1511: Caught signal {}, exiting now.\n", ThunderSignal::status);
+    fmt::print("\n" FRC1511_LOG_PREFIX "Caught signal {}, exiting now.\n", ThunderSignal::status);
   }
   
   return 0;

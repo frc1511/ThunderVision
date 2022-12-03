@@ -1,4 +1,4 @@
-#include <RollingRaspberry/basic/nt_handler.h>
+#include <RollingRaspberry/network/nt_handler.h>
 
 extern "C" {
   struct HAL_ControlWord {

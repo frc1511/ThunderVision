@@ -14,12 +14,13 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release")
 endif()
 
-set(CONFIG_JSON_PATH "/boot/RollingRaspberryConfig.json" CACHE STRING "Config JSON Path")
+set(CONFIG_JSON_DIR "/boot/frc1511" CACHE STRING "Config JSON Path")
 option(PREBUILT_WPILIB "Download pre-built WPILib binaries instead of building them" OFF)
 set(PREBUILT_WPILIB_VERSION "2023.1.1-beta-4" CACHE STRING "Version of WPILib pre-built binaries to download")
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-  set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
   set(THUNDER_DEBUG ON)
   list(APPEND THUNDER_DEF_LIST "THUNDER_DEBUG=1")
 endif()
@@ -28,9 +29,9 @@ set(THUNDER_SRC_DIR        "${CMAKE_CURRENT_SOURCE_DIR}/lib")
 set(THUNDER_INC_DIR        "${CMAKE_CURRENT_SOURCE_DIR}/include")
 set(THUNDER_THIRDPARTY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty")
 
-if(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
-  message(FATAL_ERROR "Must be built on a Raspberry Pi!")
-endif()
+# if(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
+#   message(FATAL_ERROR "Must be built on a Raspberry Pi!")
+# endif()
 
 # --- Sources ---
 

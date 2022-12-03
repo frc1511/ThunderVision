@@ -1,6 +1,7 @@
 #pragma once
 
-#include <RollingRaspberry/basic/nt_handler.h>
+#include <RollingRaspberry/network/nt_handler.h>
+#include <RollingRaspberry/basic/robot_settings.h>
 
 class Subsystem {
 public:
@@ -8,4 +9,7 @@ public:
   virtual void process() = 0;
   
   virtual void send_feedback() { }
+  
+protected:
+  static inline RobotSettings robot_settings;
 };

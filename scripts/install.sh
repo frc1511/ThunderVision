@@ -19,17 +19,17 @@ echo "Installing program 'RollingRaspberry'"
 # Install the program.
 cmake --install $PROJECT_DIR/build
 
-echo "Installing the configuration json 'RollingRaspberryConfig.json' to '/boot/RollingRaspberryConfig.json'"
+echo "Installing configuration json files to '/boot/frc1511/'"
 
 # Install the config file.
-cp $PROJECT_DIR/RollingRaspberryConfig.json /boot/RollingRaspberryConfig.json
+cp -r $PROJECT_DIR/config /boot/frc1511
 
-echo "Installing the systemd service 'RollingRaspberry.service'"
+echo "Installing systemd service 'RollingRaspberry.service'"
 
 # Install the systemd service.
 cp $PROJECT_DIR/RollingRaspberry.service /etc/systemd/system/RollingRaspberry.service
 
-echo 'Reloading the systemd daemon'
+echo 'Reloading systemd daemon'
 
 # Reload the daemon.
 systemctl daemon-reload

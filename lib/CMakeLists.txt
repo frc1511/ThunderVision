@@ -1,8 +1,13 @@
 add_thunder_sources(
   "${THUNDER_SRC_DIR}/basic/main.cpp"
   "${THUNDER_SRC_DIR}/basic/robot.cpp"
-  "${THUNDER_SRC_DIR}/config/settings.cpp"
-  "${THUNDER_SRC_DIR}/basic/nt_handler.cpp"
+  "${THUNDER_SRC_DIR}/basic/robot_settings.cpp"
+  "${THUNDER_SRC_DIR}/network/nt_handler.cpp"
   "${THUNDER_SRC_DIR}/vision/vision.cpp"
+  "${THUNDER_SRC_DIR}/vision/vision_module.cpp"
+  "${THUNDER_SRC_DIR}/vision/vision_settings.cpp"
   "${THUNDER_SRC_DIR}/vision/camera.cpp"
+  "${THUNDER_SRC_DIR}/vision/camera_props.cpp"
+  "${THUNDER_SRC_DIR}/vision/apriltag_detector.cpp"
+  "${THUNDER_SRC_DIR}/vision/apriltag_detector_settings.cpp"
 )

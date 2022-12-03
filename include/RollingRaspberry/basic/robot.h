@@ -1,7 +1,6 @@
 #pragma once
 
 #include <RollingRaspberry/rolling_raspberry.h>
-#include <RollingRaspberry/config/settings.h>
 #include <RollingRaspberry/basic/subsystem.h>
 #include <RollingRaspberry/vision/vision.h>
 
@@ -23,12 +22,11 @@ public:
   void test_process();
   
 private:
-  Settings settings;
-  Vision vision { settings };
-
+  Vision vision;
+  
   std::vector<Subsystem*> subsystems {
     &vision
   };
-
+  
   void reset(NTHandler::MatchMode mode);
 };

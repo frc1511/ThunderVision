@@ -9,6 +9,7 @@
 #include <map>
 #include <utility>
 #include <fstream>
+#include <filesystem>
 
 #include <cmath>
 #include <csignal>
@@ -17,3 +18,5 @@
 
 #include <units/length.h>
 #include <wpi/json.h>
+
+#define FRC1511_LOG_PREFIX "FRC1511: "
