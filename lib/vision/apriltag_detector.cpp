@@ -3,6 +3,8 @@
 AprilTagDetector::AprilTagDetector(AprilTagDetectorSettings settings)
 : tag_family(tag16h5_create()), tag_detector(apriltag_detector_create()) {
   apriltag_detector_add_family(tag_detector, tag_family);
+
+  fmt::print("Using {} threads\n", tag_detector->nthreads);
 }
 
 AprilTagDetector::~AprilTagDetector() {
@@ -53,5 +55,10 @@ void AprilTagDetector::visualize_detection(cv::Mat& frame, Detection& det) {
   cv::line(frame, det.corners[1], det.corners[2], cv::Scalar(255, 0, 0),   2); // Left
   cv::line(frame, det.corners[3], det.corners[0], cv::Scalar(0, 0, 255),   2); // Right
   
-  cv::putText(frame, std::to_string(det.id), det.center, cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(255, 153, 0), 2);
+  std::string text = std::to_string(det.id);
+  int font_face = cv::FONT_HERSHEY_SIMPLEX;
+  double font_scale = 1.0;
+  int base_line;
+  cv::Size text_size = cv::getTextSize(text, font_face, font_scale, 2, &base_line);
+  cv::putText(frame, text, cv::Point(det.center.x - text_size.width/2, det.center.y + text_size.height/2), font_face, font_scale, cv::Scalar(255, 153, 0), 2);
 }
