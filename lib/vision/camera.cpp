@@ -39,12 +39,12 @@ void from_json(const wpi::json& json, CameraProps& props) {
 
 // --- CameraStream ---
 
-CameraStream::CameraStream(CameraProps _props, cs::VideoSource& vid_src)
-: props(_props), cv_sink(props.name) {
-  vid_src.SetResolution(props.width, props.height);
-  vid_src.SetFPS(props.fps);
+CameraStream::CameraStream(CameraProps _props, cs::VideoCamera* _cam)
+: props(_props), cam(_cam), cv_sink(_props.name) {
+  cam->SetResolution(props.width, props.height);
+  cam->SetFPS(props.fps);
 
-  cv_sink.SetSource(vid_src);
+  cv_sink.SetSource(*cam);
   cv_sink.SetEnabled(true);
 }
 
@@ -52,33 +52,24 @@ CameraStream::~CameraStream() = default;
 
 void CameraStream::set_props(CameraProps _props) {
   props = _props;
-}
-
-const CameraProps& CameraStream::get_props() {
-  return props;
-}
-
-std::uint64_t CameraStream::get_frame(cv::Mat frame) {
-  return cv_sink.GrabFrame(frame);
+  // TODO: Apply everything
 }
 
 // --- USBCameraStream ---
 
 USBCameraStream::USBCameraStream(int _dev, CameraProps _props)
-  : usb_camera(frc::CameraServer::StartAutomaticCapture(_props.name, [&]() -> int {
-      return _dev;
-    } ())), dev(_dev),
-  CameraStream(_props, usb_camera) {
+: CameraStream(_props, [&]() -> cs::VideoCamera* {
+    usb_camera = cs::UsbCamera(_props.name, _dev);
+    return &usb_camera;
+  }()) {
 }
 
 USBCameraStream::~USBCameraStream() = default;
 
-cs::VideoSource& USBCameraStream::get_video_source() {
-  return usb_camera;
-}
-
 void USBCameraStream::host_stream() {
-  if (output_source) return;
+  if (hosting_stream) return;
+  
+  hosting_stream = true;
   
   output_source = frc::CameraServer::PutVideo(props.name, props.width, props.height);
 }
@@ -88,12 +79,7 @@ void USBCameraStream::host_stream() {
 MJPGCameraStream::MJPGCameraStream(std::string _url, CameraProps _props)
 : http_camera(_props.name, _url, cs::HttpCamera::HttpCameraKind::kMJPGStreamer),
   url(_url),
-  CameraStream(_props, http_camera) {
+  CameraStream(_props, &http_camera) {
 }
 
 MJPGCameraStream::~MJPGCameraStream() = default;
-
-cs::VideoSource& MJPGCameraStream::get_video_source() {
-  return http_camera;
-}
-

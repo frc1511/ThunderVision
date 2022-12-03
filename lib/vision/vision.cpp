@@ -56,6 +56,7 @@ void VisionModule::thread_start() {
     if (!running) {
       // Try again in 1 second.
       std::this_thread::sleep_for(1s);
+      continue;
     }
     
     std::uint64_t frame_time = cam_stream->get_frame(frame);
@@ -73,14 +74,16 @@ void VisionModule::thread_start() {
         for (int i = 0; i < zarray_size(detections); i++) {
           apriltag_detection_t* det;
           zarray_get(detections, i, &det);
+          
+          if (det->decision_margin < 100.0f) continue;
+          
           cv::line(frame, cv::Point(det->p[0][0], det->p[0][1]), cv::Point(det->p[1][0], det->p[1][1]), cv::Scalar(0, 0xff, 0), 2);
           cv::line(frame, cv::Point(det->p[0][0], det->p[0][1]), cv::Point(det->p[3][0], det->p[3][1]), cv::Scalar(0, 0, 0xff), 2);
           cv::line(frame, cv::Point(det->p[1][0], det->p[1][1]), cv::Point(det->p[2][0], det->p[2][1]), cv::Scalar(0xff, 0, 0), 2);
-          cv::line(frame, cv::Point(det->p[2][0], det->p[2][1]), cv::Point(det->p[3][0], det->p[3][1]), cv::Scalar(0xff, 0, 0), 2);
+          cv::line(frame, cv::Point(det->p[2][0], det->p[2][1]), cv::Point(det->p[3][0], det->p[3][1]), cv::Scalar(0, 0xff, 0xff), 2);
           
-          std::stringstream ss;
-          ss << det->id;
-          std::string text = ss.str();
+          std::string text = fmt::format("{}", det->id);
+          /* std::string text = fmt::format("{}", (int)det->decision_margin); */
           int fontface = cv::FONT_HERSHEY_SCRIPT_SIMPLEX;
           double fontscale = 1.0;
           int baseline;
@@ -94,7 +97,7 @@ void VisionModule::thread_start() {
       apriltag_detections_destroy(detections);
     }
     else {
-      fmt::print("FRC1511: Error grabbing frame from {}\n", cam_stream->get_desc());
+      fmt::print("FRC1511: Error grabbing frame from {}: {}\n", cam_stream->get_desc(), cam_stream->get_error());
     }
     
     end = std::chrono::high_resolution_clock::now();

@@ -30,29 +30,24 @@ void from_json(const wpi::json& json, CameraProps& props);
 
 class CameraStream {
 public:
-  CameraStream(CameraProps props, cs::VideoSource& vid_src);
+  CameraStream(CameraProps props, cs::VideoCamera* cam);
   virtual ~CameraStream();
   
-  enum class Type {
-    USB,
-    MJPG,
-  };
-  
-  virtual Type get_type() = 0;
-  
-  virtual std::string get_desc() = 0;
-  
   void set_props(CameraProps props);
-  const CameraProps& get_props();
+  inline const CameraProps& get_props() const { return props; }
   
-  virtual std::uint64_t get_frame(cv::Mat frame);
-  
-  virtual cs::VideoSource& get_video_source() = 0;
+  inline std::uint64_t get_frame(cv::Mat& frame) { return cv_sink.GrabFrame(frame); }
   
   inline virtual cs::CvSource* get_ouput_source() { return nullptr; }
   
+  inline std::string get_error() const { return cv_sink.GetError(); }
+  inline std::string get_desc() const { return cam->GetDescription(); }
+
+  inline cs::CvSink& get_sink() { return cv_sink; }
+  
 protected:
   CameraProps props;
+  cs::VideoCamera* cam;
   cs::CvSink cv_sink;
 };
 
@@ -66,12 +61,6 @@ public:
    */
   USBCameraStream(int dev, CameraProps props);
   ~USBCameraStream();
-  
-  inline Type get_type() override { return Type::USB; }
-  
-  inline std::string get_desc() override { return fmt::format("USB Camera (ID: {})", dev); }
-  
-  cs::VideoSource& get_video_source() override;
   
   /**
    * @brief Starts hosting the USB Camera Stream.
@@ -101,12 +90,6 @@ public:
    */
   MJPGCameraStream(std::string url, CameraProps props);
   ~MJPGCameraStream();
-  
-  inline Type get_type() override { return Type::MJPG; }
-  
-  inline std::string get_desc() override { return fmt::format("MJPG Camera Stream (URL: {})", url); }
-  
-  cs::VideoSource& get_video_source() override;
   
 private:
   cs::HttpCamera http_camera;

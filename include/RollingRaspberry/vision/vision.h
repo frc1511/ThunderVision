@@ -35,7 +35,7 @@ private:
 
   CameraStream* cam_stream;
 
-  bool thread_running = false;
+  bool thread_running = true;
   bool thread_terminated = false;
   
   std::thread module_thread;
