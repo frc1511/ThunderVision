@@ -17,6 +17,7 @@ endif()
 set(CONFIG_JSON_DIR "/boot/frc1511" CACHE STRING "Config JSON Path")
 option(PREBUILT_WPILIB "Download pre-built WPILib binaries instead of building them" OFF)
 set(PREBUILT_WPILIB_VERSION "2023.1.1-beta-4" CACHE STRING "Version of WPILib pre-built binaries to download")
+option(BUILD_TOOLS "Build assorted tools" ON)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -25,9 +26,10 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   list(APPEND THUNDER_DEF_LIST "THUNDER_DEBUG=1")
 endif()
 
-set(THUNDER_SRC_DIR        "${CMAKE_CURRENT_SOURCE_DIR}/lib")
-set(THUNDER_INC_DIR        "${CMAKE_CURRENT_SOURCE_DIR}/include")
+set(THUNDER_SRC_DIR        "${CMAKE_CURRENT_SOURCE_DIR}/src/lib")
+set(THUNDER_INC_DIR        "${CMAKE_CURRENT_SOURCE_DIR}/src/include")
 set(THUNDER_THIRDPARTY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty")
+set(THUNDER_TOOLS_DIR      "${CMAKE_CURRENT_SOURCE_DIR}/tools")
 
 # if(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
 #   message(FATAL_ERROR "Must be built on a Raspberry Pi!")
@@ -103,7 +105,7 @@ endif()
 
 add_subdirectory("${THUNDER_THIRDPARTY_DIR}/apriltag" EXCLUDE_FROM_ALL)
 
-# --- Build ---
+# --- Build Service ---
 
 add_executable(${PROJECT_NAME} ${THUNDER_SRC})
 
@@ -156,6 +158,10 @@ configure_file(
   "${THUNDER_INC_DIR}/RollingRaspberry/config/config.h.in"
   "${THUNDER_INC_DIR}/RollingRaspberry/config/config.h"
 )
+
+# --- Build Tools ---
+
+add_subdirectory(${THUNDER_TOOLS_DIR})
 
 # --- Install ---
 
