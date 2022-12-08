@@ -21,6 +21,7 @@ include("${THUNDER_SRC_DIR}/CMakeLists.txt")
 # --- Build ---
 
 add_executable(${PROJECT_NAME} ${THUNDER_SRC})
+target_include_directories(${PROJECT_NAME} PUBLIC ${THUNDER_INC_DIR})
 
 # --- Thirdparty ---
 
@@ -31,6 +32,8 @@ endif()
 
 target_link_libraries(${PROJECT_NAME} PUBLIC ${OpenCV_LIBS})
 target_include_directories(${PROJECT_NAME} PUBLIC ${OpenCV_INCLUDE_DIRS})
+
+target_link_libraries(${PROJECT_NAME} PUBLIC wpimath)
 
 # --- Definitions ---
 
