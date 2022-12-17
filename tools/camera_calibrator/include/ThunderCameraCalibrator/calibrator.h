@@ -29,11 +29,11 @@ public:
 private:
   std::vector<std::filesystem::path> images;
   Chessboard chessboard;
-
+  
   std::vector<std::vector<cv::Point3f>> object_points;
   std::vector<std::vector<cv::Point2f>> image_points;
   std::vector<cv::Point2f> corners;
-
+  
   cv::Mat camera_matrix; // K
   cv::Mat dist_coeffs; // D
 };

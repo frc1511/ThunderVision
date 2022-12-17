@@ -42,3 +42,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC wpimath)
 # --- Definitions ---
 
 target_compile_definitions(${PROJECT_NAME} PUBLIC ${THUNDER_DEF_LIST})
+
+# --- Install ---
+
+install(TARGETS ${PROJECT_NAME})

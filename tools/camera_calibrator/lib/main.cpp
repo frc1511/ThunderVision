@@ -19,21 +19,21 @@ const struct option long_opts[] = {
 
 int main(int argc, char* const* argv) {
   std::vector<std::filesystem::path> img_paths;
-
+  
   auto usage = [](bool err = false) {
     auto& stream = err ? std::cerr : std::cout;
-
+    
     stream << "Usage: camera_calibrator [options] <image directories>\n";
-
+    
     stream << "Options:\n";
     stream << "\t--help\t\tShows usage (-h)\n";
     stream << "\t--rows\t\tChessboard rows (-r)\n";
     stream << "\t--columns\tChessboard columns (-c)\n";
     stream << "\t--square_size\tChessboard square size (cm) (-s)\n";
   };
-
+  
   Chessboard chessboard { -1, -1, -1_cm };
-
+  
   int opt, i;
   while ((opt = getopt_long_only(argc, argv, short_opts, long_opts, &i)) != -1) {
     switch (opt) {
@@ -66,17 +66,17 @@ int main(int argc, char* const* argv) {
         return EXIT_FAILURE;
     }
   }
-
+  
   if (chessboard.sq_size == -1_cm || chessboard.rows == -1 || chessboard.cols == -1) {
     std::cerr << "Chessboard rows, columns, and square size must be specified\n";
     return EXIT_FAILURE;
   }
-
+  
   auto file_exists = [](const std::filesystem::path& path) -> bool {
     struct stat s;
     return stat(path.c_str(), &s) == 0;
   };
-
+  
   while (optind < argc) {
     std::filesystem::path img_path(argv[optind++]);
     if (!file_exists(img_path)) {
@@ -85,17 +85,14 @@ int main(int argc, char* const* argv) {
     }
     img_paths.emplace_back(img_path);
   }
-
+  
   if (img_paths.size() < 2) {
     std::cerr << "No image paths specified.\n";
     return EXIT_FAILURE;
   }
-  else if (img_paths.size() < 30) {
-    std::cerr << "Warning: less than 30 images specified.\n";
-  }
-
+  
   Calibrator calibrator(img_paths, chessboard);
-
+  
   std::cout << "Camera matrix:\n" << calibrator.get_camera_matrix() << '\n';
   std::cout << "Distortion coefficients:\n" << calibrator.get_distortion_coefficients() << '\n';
   
