@@ -97,4 +97,4 @@ _deps
 [Bb]uild/
 
 # Config file
-include/RollingRaspberry/config/config.h
+src/include/RollingRaspberry/config/config.h
