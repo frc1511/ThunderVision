@@ -47,7 +47,7 @@ include("${THUNDER_SRC_DIR}/CMakeLists.txt")
 
 set(WPILIB_DOWNLOAD_DIR "${CMAKE_CURRENT_BINARY_DIR}/wpilib_${PREBUILT_WPILIB_VERSION}")
 
-set(WPILIB_MODULES "wpiutil;wpimath;wpinet;ntcore;cscore;cameraserver")
+set(WPILIB_MODULES "wpiutil;wpimath;wpinet;ntcore;cscore;cameraserver;apriltag")
 
 if(PREBUILT_WPILIB)
   function(download_lib LIB_NAME LIB_URL LIB_DEST)
@@ -101,10 +101,6 @@ else()
   endforeach()
 endif()
 
-# --- AprilTag ---
-
-add_subdirectory("${THUNDER_THIRDPARTY_DIR}/apriltag" EXCLUDE_FROM_ALL)
-
 # --- Build Service ---
 
 add_executable(${PROJECT_NAME} ${THUNDER_SRC})
@@ -143,10 +139,6 @@ if(NOT Threads_FOUND)
 endif()
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads)
-
-# --- AprilTags ---
-
-target_link_libraries(${PROJECT_NAME} PUBLIC apriltag)
 
 # --- Definitions ---
 
