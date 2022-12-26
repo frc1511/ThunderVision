@@ -15,8 +15,6 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 set(CONFIG_JSON_DIR "/boot/frc1511" CACHE STRING "Config JSON Path")
-option(PREBUILT_WPILIB "Download pre-built WPILib binaries instead of building them" OFF)
-set(PREBUILT_WPILIB_VERSION "2023.1.1-beta-4" CACHE STRING "Version of WPILib pre-built binaries to download")
 option(BUILD_TOOLS "Build assorted tools" ON)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -45,61 +43,17 @@ include("${THUNDER_SRC_DIR}/CMakeLists.txt")
 
 # --- Thirdparty ---
 
-set(WPILIB_DOWNLOAD_DIR "${CMAKE_CURRENT_BINARY_DIR}/wpilib_${PREBUILT_WPILIB_VERSION}")
-
 set(WPILIB_MODULES "wpiutil;wpimath;wpinet;ntcore;cscore;cameraserver;apriltag")
 
-if(PREBUILT_WPILIB)
-  function(download_lib LIB_NAME LIB_URL LIB_DEST)
-    message(STATUS "Downloading ${LIB_URL}")
-    file(DOWNLOAD ${LIB_URL} ${LIB_DEST})
-    message(STATUS "Downloaded ${LIB_NAME}")
-  endfunction()
-  
-  function(extract_lib LIB_NAME ZIP_DIR LIB_DEST)
-    message(STATUS "Extracting ${ZIP_DIR}")
-    file(ARCHIVE_EXTRACT INPUT "${ZIP_DIR}" DESTINATION "${LIB_DEST}")
-    message(STATUS "Extracted ${LIB_NAME}")
-  endfunction()
-  
-  function(download_extract_lib LIB_NAME)
-    set(LIB_URL "https://frcmaven.wpi.edu/artifactory/release/edu/wpi/first/${LIB_NAME}/${LIB_NAME}-cpp/${PREBUILT_WPILIB_VERSION}/${LIB_NAME}-cpp-${PREBUILT_WPILIB_VERSION}-linuxarm32static.zip")
-    set(LIB_DEST "${WPILIB_DOWNLOAD_DIR}/${LIB_NAME}")
-    
-    download_lib(${LIB_NAME} ${LIB_URL} "${LIB_DEST}.zip")
-    extract_lib(${LIB_NAME} "${LIB_DEST}.zip" ${LIB_DEST})
-  endfunction()
-  
-  function(download_extract_headers LIB_NAME)
-    set(INC_URL "https://frcmaven.wpi.edu/artifactory/release/edu/wpi/first/${LIB_NAME}/${LIB_NAME}-cpp/${PREBUILT_WPILIB_VERSION}/${LIB_NAME}-cpp-${PREBUILT_WPILIB_VERSION}-headers.zip")
-    
-    set(INC_DEST "${WPILIB_DOWNLOAD_DIR}/${LIB_NAME}_include")
-    
-    download_lib(${LIB_NAME} ${INC_URL} "${INC_DEST}.zip")
-    extract_lib(${LIB_NAME} "${INC_DEST}.zip" ${INC_DEST})
-  endfunction()
-  
-  foreach(MODULE ${WPILIB_MODULES})
-    if (NOT EXISTS "${WPILIB_DOWNLOAD_DIR}/${MODULE}/linux/arm32/static/lib${MODULE}.a")
-      download_extract_lib(${MODULE})
-    endif()
-    
-    if (NOT EXISTS "${WPILIB_DOWNLOAD_DIR}/${MODULE}_include")
-      download_extract_headers(${MODULE})
-    endif()
-  endforeach()
-  
-else()
-  set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${THUNDER_THIRDPARTY_DIR}/allwpilib/cmake/modules")
-  set(WPILIB_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
-  
-  set(WITH_JAVA OFF CACHE BOOL "" FORCE)
-  set(WITH_TESTS OFF CACHE BOOL "" FORCE)
-  
-  foreach(MODULE ${WPILIB_MODULES})
-    add_subdirectory("${THUNDER_THIRDPARTY_DIR}/allwpilib/${MODULE}" EXCLUDE_FROM_ALL)
-  endforeach()
-endif()
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${THUNDER_THIRDPARTY_DIR}/allwpilib/cmake/modules")
+set(WPILIB_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
+
+set(WITH_JAVA OFF CACHE BOOL "" FORCE)
+set(WITH_TESTS OFF CACHE BOOL "" FORCE)
+
+foreach(MODULE ${WPILIB_MODULES})
+  add_subdirectory("${THUNDER_THIRDPARTY_DIR}/allwpilib/${MODULE}" EXCLUDE_FROM_ALL)
+endforeach()
 
 # --- Build Service ---
 
@@ -107,27 +61,15 @@ add_executable(${PROJECT_NAME} ${THUNDER_SRC})
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${THUNDER_INC_DIR})
 
-if(PREBUILT_WPILIB)
-  target_link_directories(${PROJECT_NAME} PUBLIC ${WPILIB_DOWNLOAD_DIR})
-  
-  foreach(MODULE ${WPILIB_MODULES})
-    target_link_libraries(${PROJECT_NAME} PUBLIC "${WPILIB_DOWNLOAD_DIR}/${MODULE}/linux/arm32/static/lib${MODULE}.a")
-    target_include_directories(${PROJECT_NAME} PUBLIC "${WPILIB_DOWNLOAD_DIR}/${MODULE}_include")
-  endforeach()
-  
-  # --- OpenCV ---
-  
-  find_package(OpenCV REQUIRED)
-  if(NOT OpenCV_FOUND)
-    message(FATAL_ERROR "OpenCV not found.")
-  endif()
-  
-  target_link_libraries(${PROJECT_NAME} PUBLIC ${OpenCV_LIBS})
-  target_include_directories(${PROJECT_NAME} PUBLIC ${OpenCV_INCLUDE_DIRS})
-else()
-  foreach(MODULE ${WPILIB_MODULES})
-    target_link_libraries(${PROJECT_NAME} PUBLIC ${MODULE})
-  endforeach()
+# --- WPILib ---
+
+foreach(MODULE ${WPILIB_MODULES})
+  target_link_libraries(${PROJECT_NAME} PUBLIC ${MODULE})
+endforeach()
+
+# Fix WPILib linking on macOS
+if(APPLE)
+  target_link_libraries(${PROJECT_NAME} PUBLIC "-framework Foundation -framework AVFoundation -framework CoreMedia -framework CoreVideo")
 endif()
 
 # --- Pthread ---
