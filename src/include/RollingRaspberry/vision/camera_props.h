@@ -1,6 +1,7 @@
 #pragma once
 
 #include <RollingRaspberry/rolling_raspberry.h>
+#include <RollingRaspberry/vision/camera_model.h>
 #include <frc/geometry/Pose3d.h>
 
 struct CameraProps {
@@ -13,9 +14,9 @@ struct CameraProps {
   
   // The fps of the camera.
   std::size_t fps = 30;
-  
-  // Field of view of the camera.
-  units::degree_t fov = 68.5_deg;
+
+  std::string model_name = "";
+  CameraModel* model = nullptr;
   
   frc::Pose3d pose;
 };

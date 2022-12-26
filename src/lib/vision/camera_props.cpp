@@ -6,7 +6,7 @@ void to_json(wpi::json& json, const CameraProps& props) {
     { "width",    props.width },
     { "height",   props.height },
     { "fps",      props.fps },
-    { "fov",      props.fov.value() },
+    { "model",    props.model_name },
     { "position", props.pose.Translation() },
     { "rotation", wpi::json {
                     { "roll", props.pose.Rotation().X().value() },
@@ -22,7 +22,7 @@ void from_json(const wpi::json& json, CameraProps& props) {
   props.width  = json.at("width").get<std::size_t>();
   props.height = json.at("height").get<std::size_t>();
   props.fps    = json.at("fps").get<std::size_t>();
-  props.fov    = units::degree_t(json.at("fov").get<double>());
+  props.model_name = json.at("model").get<std::string>();
   frc::Translation3d pos = json.at("position").get<frc::Translation3d>();
 
   wpi::json rot_json = json.at("rotation");

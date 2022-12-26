@@ -2,9 +2,11 @@
 
 #include <RollingRaspberry/rolling_raspberry.h>
 #include <RollingRaspberry/vision/camera_props.h>
+#include <RollingRaspberry/vision/camera_model.h>
 #include <RollingRaspberry/vision/apriltag_detector_settings.h>
 
 struct VisionSettings {
+  std::map<std::string, CameraModel> camera_models;
   std::vector<USBCameraProps> usb_camera_props;
   std::vector<MJPGCameraProps> mjpg_camera_props;
 
