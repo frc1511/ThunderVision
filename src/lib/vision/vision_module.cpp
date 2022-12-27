@@ -1,9 +1,9 @@
 #include <RollingRaspberry/vision/vision_module.h>
 #include <frc/apriltag/AprilTagDetector_cv.h>
 
-VisionModule::VisionModule(CameraStream* stream, AprilTagDetectorSettings settings)
+VisionModule::VisionModule(CameraStream* stream, const VisionSettings* settings)
 : cam_stream(stream), settings(settings) {
-  tag_detector.AddFamily("tag16h5");
+  tag_detector.AddFamily(settings->tag_family);
 }
 
 VisionModule::~VisionModule() {
@@ -75,7 +75,7 @@ void VisionModule::thread_start() {
 
       if (output_stream) {
         for (const frc::AprilTagDetection* det : results) {
-          if (det->GetDecisionMargin() < settings.min_decision_margin) {
+          if (det->GetDecisionMargin() < settings->min_decision_margin) {
             continue;
           }
 

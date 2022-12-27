@@ -2,15 +2,18 @@
 
 #include <RollingRaspberry/rolling_raspberry.h>
 #include <RollingRaspberry/vision/camera_props.h>
-#include <RollingRaspberry/vision/camera_model.h>
-#include <RollingRaspberry/vision/apriltag_detector_settings.h>
+#include <units/length.h>
+#include <frc/apriltag/AprilTagFieldLayout.h>
 
 struct VisionSettings {
-  std::map<std::string, CameraModel> camera_models;
+  std::string tag_family = "tag16h5";
+  units::meter_t tag_size = 6_in;
+  std::string field_layout_name = "";
+  frc::AprilTagFieldLayout* field_layout = nullptr;
+  double min_decision_margin = 100.0;
+
   std::vector<USBCameraProps> usb_camera_props;
   std::vector<MJPGCameraProps> mjpg_camera_props;
-
-  AprilTagDetectorSettings apriltag_detector_settings;
 };
 
 void to_json(wpi::json& json, const VisionSettings& settings);

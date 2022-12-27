@@ -5,11 +5,11 @@ Vision::Vision()
 
   for (const auto& props : vision_settings.usb_camera_props) {
     usb_cameras.emplace_back(props);
-    vision_modules.push_back(std::make_unique<VisionModule>(&usb_cameras.back(), vision_settings.apriltag_detector_settings));
+    vision_modules.push_back(std::make_unique<VisionModule>(&usb_cameras.back(), &vision_settings));
   }
   for (const auto& props : vision_settings.mjpg_camera_props) {
     mjpg_cameras.emplace_back(props);
-    vision_modules.push_back(std::make_unique<VisionModule>(&mjpg_cameras.back(), vision_settings.apriltag_detector_settings));
+    vision_modules.push_back(std::make_unique<VisionModule>(&mjpg_cameras.back(), &vision_settings));
   }
 
   for (auto& mod : vision_modules) {

@@ -9,5 +9,4 @@ add_thunder_sources(
   "${THUNDER_SRC_DIR}/vision/camera.cpp"
   "${THUNDER_SRC_DIR}/vision/camera_props.cpp"
   "${THUNDER_SRC_DIR}/vision/camera_model.cpp"
-  "${THUNDER_SRC_DIR}/vision/apriltag_detector_settings.cpp"
 )

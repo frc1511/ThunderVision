@@ -1,0 +1,26 @@
+{
+  "logitech_hd_pro_c920" : {
+    "intrinsic_matrix" : [
+      1, 0, 1,
+      0, 1, 1,
+      0, 0, 1
+    ],
+    "distortion_coefficients" : [ 0, 0, 0, 0, 0 ]
+  },
+  "microsoft_lifecam_hd_3000" : {
+    "intrinsic_matrix" : [
+      1, 0, 1,
+      0, 1, 1,
+      0, 0, 1
+    ],
+    "distortion_coefficients" : [ 0, 0, 0, 0, 0 ]
+  },
+  "limelight_2+" : {
+    "intrinsic_matrix" : [
+      1, 0, 1,
+      0, 1, 1,
+      0, 0, 1
+    ],
+    "distortion_coefficients" : [ 0, 0, 0, 0, 0 ]
+  }
+}

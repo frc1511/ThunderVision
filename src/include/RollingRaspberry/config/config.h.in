@@ -3,5 +3,6 @@
 #include <RollingRaspberry/rolling_raspberry.h>
 
 #define THUNDER_CONFIG_DIR          std::filesystem::path("@CONFIG_JSON_DIR@")
-#define THUNDER_VISION_CONFIG_JSON  (THUNDER_CONFIG_DIR / "vision.json")
-#define THUNDER_FIELD_CONFIG_JSON   (THUNDER_CONFIG_DIR / "field.json")
+#define THUNDER_CONFIG_VISION_SETTINGS_JSON  (THUNDER_CONFIG_DIR / "vision_settings.json")
+#define THUNDER_CONFIG_FIELD_LAYOUTS_JSON    (THUNDER_CONFIG_DIR / "field_layouts.json")
+#define THUNDER_CONFIG_CAMERA_PROPERTIES_JSON (THUNDER_CONFIG_DIR / "camera_properties.json")

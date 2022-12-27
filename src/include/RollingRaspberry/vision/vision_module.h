@@ -2,7 +2,7 @@
 
 #include <RollingRaspberry/rolling_raspberry.h>
 #include <RollingRaspberry/vision/camera.h>
-#include <RollingRaspberry/vision/apriltag_detector_settings.h>
+#include <RollingRaspberry/vision/vision_settings.h>
 #include <frc/apriltag/AprilTagDetector.h>
 #include <frc/apriltag/AprilTagDetection.h>
 #include <opencv2/opencv.hpp>
@@ -11,7 +11,7 @@
 
 class VisionModule {
 public:
-  VisionModule(CameraStream* stream, AprilTagDetectorSettings settings);
+  VisionModule(CameraStream* stream, const VisionSettings* settings);
   ~VisionModule();
   
   /**
@@ -61,7 +61,7 @@ private:
   
   CameraStream* cam_stream;
 
-  AprilTagDetectorSettings settings;
+  const VisionSettings* settings;
   
   frc::AprilTagDetector tag_detector;
   

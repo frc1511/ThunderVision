@@ -1,41 +1,19 @@
 {
-  "camera_models" :
-  {
-    "logitech_hd_pro_c920" : {
-      "intrinsic_matrix" : [
-        1, 0, 1,
-        0, 1, 1,
-        0, 0, 1
-      ],
-      "distortion_coefficients" : [ 0, 0, 0, 0, 0 ]
-    },
-    "microsoft_lifecam_hd_3000" : {
-      "intrinsic_matrix" : [
-        1, 0, 1,
-        0, 1, 1,
-        0, 0, 1
-      ],
-      "distortion_coefficients" : [ 0, 0, 0, 0, 0 ]
-    },
-    "limelight" : {
-      "intrinsic_matrix" : [
-        1, 0, 1,
-        0, 1, 1,
-        0, 0, 1
-      ],
-      "distortion_coefficients" : [ 0, 0, 0, 0, 0 ]
-    }
-  },
+  "apriltag_family" : "tag16h5",
+  "apriltag_size" : 0.1524,
+  "field_layout" : "2022-rapidreact",
+  "min_decision_margin" : 100.0,
+
   "usb_cameras" : [
     {
       "dev" : 0,
       "host_stream" : true,
       "props" : {
         "name" : "intake_camera",
+        "model" : "logitech_hd_pro_c920",
         "width" : 320,
         "height" : 240,
         "fps" : 30,
-        "model" : "logitech_hd_pro_c920",
         "position" : {
           "x" : 0,
           "y" : 0,
@@ -54,10 +32,10 @@
       "url" : "http://limelight-homer.local:5800/stream.mjpg",
       "props" : {
         "name" : "limelight",
+        "model": "limelight_2+",
         "width" : 320,
         "height" : 240,
         "fps" : 30,
-        "model": "limelight",
         "position" : {
           "x" : 0,
           "y" : 0,
@@ -70,8 +48,5 @@
         }
       }
     }
-  ],
-  "apriltag_detector" : {
-    "min_decision_margin" : 100.0
-  }
+  ]
 }
