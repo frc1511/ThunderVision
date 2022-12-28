@@ -1,8 +1,6 @@
 #include <RollingRaspberry/basic/robot.h>
 #include <RollingRaspberry/network/nt_handler.h>
 
-#include <unistd.h>
-
 namespace ThunderSignal {
   volatile std::sig_atomic_t status;
 }

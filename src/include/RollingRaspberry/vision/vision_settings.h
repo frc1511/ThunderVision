@@ -11,6 +11,7 @@ struct VisionSettings {
   std::string field_layout_name = "";
   frc::AprilTagFieldLayout* field_layout = nullptr;
   double min_decision_margin = 100.0;
+  int estimate_iters = 50;
 
   std::vector<USBCameraProps> usb_camera_props;
   std::vector<MJPGCameraProps> mjpg_camera_props;

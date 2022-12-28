@@ -5,6 +5,8 @@
 #include <RollingRaspberry/vision/vision_settings.h>
 #include <frc/apriltag/AprilTagDetector.h>
 #include <frc/apriltag/AprilTagDetection.h>
+#include <frc/apriltag/AprilTagPoseEstimator.h>
+#include <frc/apriltag/AprilTagPoseEstimate.h>
 #include <opencv2/opencv.hpp>
 #include <cscore.h>
 #include <cscore_cv.h>
@@ -44,6 +46,27 @@ public:
    * @return Whether the Vision Module thread has terminated.
    */
   bool is_terminated() const;
+
+  /**
+   * @brief Returns the time point of the last pose estimate.
+   * 
+   * @return The time point of the last pose estimate.
+   */
+  std::chrono::high_resolution_clock::time_point get_pose_estimate_time_point() const;
+
+  /**
+   * @brief Returns whether the module has a new pose estimate.
+   * 
+   * @return Whether the module has a new pose estimate.
+   */
+  bool has_new_pose_estimate() const;
+
+  /**
+   * @brief Returns the last pose estimate. Sets the 'new pose estimate' status to false.
+   * 
+   * @return The last pose estimate.
+   */
+  frc::AprilTagPoseEstimate get_pose_estimate();
   
 private:
   /**
@@ -60,10 +83,17 @@ private:
   static void visualize_detection(cv::Mat& frame, const frc::AprilTagDetection& detection);
   
   CameraStream* cam_stream;
+  const CameraModel* cam_model;
 
   const VisionSettings* settings;
   
   frc::AprilTagDetector tag_detector;
+
+  std::chrono::high_resolution_clock::time_point pose_estimate_time_point;
+  frc::AprilTagPoseEstimate pose_estimate;
+  bool new_pose_estimate = false;
+
+  frc::AprilTagPoseEstimator pose_estimator;
   
   bool thread_running = false;
   bool thread_terminated = true;
