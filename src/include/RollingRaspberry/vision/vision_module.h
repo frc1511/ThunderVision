@@ -81,11 +81,12 @@ private:
    * @param detection The AprilTag detection to draw.
    */
   static void visualize_detection(cv::Mat& frame, const frc::AprilTagDetection& detection);
-  
-  CameraStream* cam_stream;
-  const CameraModel* cam_model;
 
   const VisionSettings* settings;
+  
+  CameraStream* cam_stream;
+  const CameraProps* cam_props;
+  const std::array<double, 9> cam_matrix;
   
   frc::AprilTagDetector tag_detector;
 

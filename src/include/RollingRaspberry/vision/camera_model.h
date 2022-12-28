@@ -4,6 +4,9 @@
 #include <Eigen/Core>
 
 struct CameraModel {
+  std::size_t width = 1280;
+  std::size_t height = 720;
+
   /**
    * Intrinsic matrix of the camera.
    * 
@@ -13,16 +16,23 @@ struct CameraModel {
    * 
    * fx, fy: focal length
    * cx, cy: principal point
+   * 
+   * Values are in pixels.
    */
   std::array<double, 9> matrix;
 
   // Distortion coefficients of the camera.
   std::array<double, 5> dist_coeffs;
 
-  inline double get_fx() const { return matrix[0]; }
-  inline double get_fy() const { return matrix[4]; }
-  inline double get_cx() const { return matrix[2]; }
-  inline double get_cy() const { return matrix[5]; }
+  /**
+   * @brief Returns the camera matrix adjusted for the frame size.
+   * 
+   * @param width Width of the frame.
+   * @param height Height of the frame.
+   * 
+   * @return The camera matrix adjusted for the frame size.
+   */
+  std::array<double, 9> get_adjusted_matrix(std::size_t width, std::size_t height) const;
 };
 
 void to_json(wpi::json& json, const CameraModel& model);

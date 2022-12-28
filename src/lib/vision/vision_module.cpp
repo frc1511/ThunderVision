@@ -2,12 +2,18 @@
 #include <frc/apriltag/AprilTagDetector_cv.h>
 
 VisionModule::VisionModule(CameraStream* stream, const VisionSettings* settings)
-: cam_stream(stream), cam_model(cam_stream->get_props().model), settings(settings),
+: settings(settings), cam_stream(stream), cam_props(&cam_stream->get_props()),
+
+  // Adjust the camera matrix to account for the resolution of the camera.
+  cam_matrix(cam_props->model->get_adjusted_matrix(cam_props->width, cam_props->height)),
+
+  // Initialize the AprilTagPoseEstimator with the intrinsic properties of the camera.
   pose_estimator(frc::AprilTagPoseEstimator::Config { settings->tag_size,
-    cam_model->get_fx(), cam_model->get_fy(),
-    cam_model->get_cx(), cam_model->get_cy(),
+    cam_matrix[0], cam_matrix[4], // fx, fy
+    cam_matrix[2], cam_matrix[5], // cx, cy
   }) {
 
+  // Set the family of AprilTags to detect.
   tag_detector.AddFamily(settings->tag_family);
 }
 
@@ -156,10 +162,11 @@ void VisionModule::visualize_detection(cv::Mat& frame, const frc::AprilTagDetect
   cv::line(frame, c1, c2, cv::Scalar(255, 0, 0),   2); // Left
   cv::line(frame, c3, c0, cv::Scalar(0, 0, 255),   2); // Right
 
-  std::string text = std::to_string(det.GetId());
+  std::string text = fmt::format("{}", det.GetId());
   int font_face = cv::FONT_HERSHEY_SIMPLEX;
-  double font_scale = 1.0;
+  double font_scale = 0.5;
   int base_line;
   cv::Size text_size = cv::getTextSize(text, font_face, font_scale, 2, &base_line);
-  cv::putText(frame, text, cv::Point(det.GetCenter().x - text_size.width/2, det.GetCenter().y + text_size.height/2), font_face, font_scale, cv::Scalar(255, 153, 0), 2);
+  // Center the text in the tag.
+  cv::putText(frame, text, cv::Point(det.GetCenter().x - text_size.width / 2, det.GetCenter().y + text_size.height / 2), font_face, font_scale, cv::Scalar(255, 153, 0), 2);
 }

@@ -1,13 +1,27 @@
 {
-  "logitech_hd_pro_c920" : {
+  "facetime_imac_4k_21.5_inch_2017" : {
+    "width" : 1280,
+    "height" : 720,
     "intrinsic_matrix" : [
-      1, 0, 1,
-      0, 1, 1,
-      0, 0, 1
+      940.016, 0,       665.334,
+      0,       932.375, 406.368,
+      0,       0,       1
+    ],
+    "distortion_coefficients" : [ 0, 0, 0, 0, 0 ]
+  },
+  "logitech_hd_pro_c920" : {
+    "width" : 1920,
+    "height" : 1080,
+    "intrinsic_matrix" : [
+      1451.480, 0,        908.592,
+      0,        1454.699, 558.481,
+      0,        0,        1
     ],
     "distortion_coefficients" : [ 0, 0, 0, 0, 0 ]
   },
   "microsoft_lifecam_hd_3000" : {
+    "width" : 1280,
+    "height" : 720,
     "intrinsic_matrix" : [
       1, 0, 1,
       0, 1, 1,
@@ -16,6 +30,8 @@
     "distortion_coefficients" : [ 0, 0, 0, 0, 0 ]
   },
   "limelight_2+" : {
+    "width" : 320,
+    "height" : 240,
     "intrinsic_matrix" : [
       1, 0, 1,
       0, 1, 1,

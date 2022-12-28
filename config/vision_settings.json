@@ -11,7 +11,7 @@
       "host_stream" : true,
       "props" : {
         "name" : "intake_camera",
-        "model" : "logitech_hd_pro_c920",
+        "model" : "facetime_imac_4k_21.5_inch_2017",
         "width" : 320,
         "height" : 240,
         "fps" : 30,
@@ -28,26 +28,5 @@
       }
     }
   ],
-  "mjpg_cameras" : [
-    {
-      "url" : "http://limelight-homer.local:5800/stream.mjpg",
-      "props" : {
-        "name" : "limelight",
-        "model": "limelight_2+",
-        "width" : 320,
-        "height" : 240,
-        "fps" : 30,
-        "position" : {
-          "x" : 0,
-          "y" : 0,
-          "z" : 0
-        },
-        "rotation" : {
-          "roll" : 0,
-          "pitch" : 0,
-          "yaw" : 0
-        }
-      }
-    }
-  ]
+  "mjpg_cameras" : []
 }
