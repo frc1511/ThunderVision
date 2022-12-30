@@ -3,6 +3,7 @@
 
 VisionModule::VisionModule(CameraStream* stream, const VisionSettings* settings)
 : settings(settings), cam_stream(stream), cam_props(&cam_stream->get_props()),
+  robot_to_camera(cam_props->robot_to_camera),
 
   // Adjust the camera matrix to account for the resolution of the camera.
   cam_matrix(cam_props->model->get_adjusted_matrix(cam_props->width, cam_props->height)),
@@ -52,20 +53,24 @@ bool VisionModule::is_terminated() const {
   return thread_terminated;
 }
 
-std::chrono::high_resolution_clock::time_point VisionModule::get_pose_estimate_time_point() const {
+std::chrono::high_resolution_clock::time_point VisionModule::get_pose_estimates_time_point() const {
   std::lock_guard<std::mutex> lk(module_mutex);
-  return pose_estimate_time_point;
+  return pose_estimates_time_point;
 }
 
-bool VisionModule::has_new_pose_estimate() const {
+bool VisionModule::has_new_pose_estimates() const {
   std::lock_guard<std::mutex> lk(module_mutex);
-  return new_pose_estimate;
+  return new_pose_estimates;
 }
 
-frc::AprilTagPoseEstimate VisionModule::get_pose_estimate() {
+std::vector<frc::AprilTagPoseEstimate> VisionModule::get_pose_estimates() {
   std::lock_guard<std::mutex> lk(module_mutex);
-  new_pose_estimate = false;
-  return pose_estimate;
+  new_pose_estimates = false;
+  return pose_estimates;
+}
+
+frc::Transform3d VisionModule::get_robot_to_camera_transform() const {
+  return robot_to_camera;
 }
 
 void VisionModule::terminate() {
@@ -104,8 +109,10 @@ void VisionModule::thread_start() {
       
       // Detect tags.
       frc::AprilTagDetector::Results results(frc::AprilTagDetect(tag_detector, frame_gray));
-      
+
       cs::CvSource* output_stream = cam_stream->get_ouput_source();
+
+      std::vector<frc::AprilTagPoseEstimate> working_pose_estimates;
 
       for (const frc::AprilTagDetection* det : results) {
         // Skip detections with low decision margin.
@@ -121,13 +128,14 @@ void VisionModule::thread_start() {
         // Estimate the pose of the tag.
         frc::AprilTagPoseEstimate est(pose_estimator.EstimateOrthogonalIteration(*det, settings->estimate_iters));
 
-        // Set the pose estimate.
-        {
-          std::lock_guard<std::mutex> lk(module_mutex);
-          pose_estimate = std::move(est);
-          pose_estimate_time_point = std::chrono::high_resolution_clock::now();
-          new_pose_estimate = true;
-        }
+        working_pose_estimates.push_back(est);
+      }
+
+      if (!working_pose_estimates.empty()) {
+        std::lock_guard<std::mutex> lk(module_mutex);
+        pose_estimates = working_pose_estimates;
+        pose_estimates_time_point = start;
+        new_pose_estimates = true;
       }
       
       output_stream->PutFrame(frame);

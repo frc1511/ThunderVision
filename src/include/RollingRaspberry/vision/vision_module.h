@@ -7,6 +7,7 @@
 #include <frc/apriltag/AprilTagDetection.h>
 #include <frc/apriltag/AprilTagPoseEstimator.h>
 #include <frc/apriltag/AprilTagPoseEstimate.h>
+#include <frc/geometry/Transform3d.h>
 #include <opencv2/opencv.hpp>
 #include <cscore.h>
 #include <cscore_cv.h>
@@ -48,25 +49,32 @@ public:
   bool is_terminated() const;
 
   /**
-   * @brief Returns the time point of the last pose estimate.
+   * @brief Returns the time point of the last pose estimates.
    * 
-   * @return The time point of the last pose estimate.
+   * @return The time point of the last pose estimates.
    */
-  std::chrono::high_resolution_clock::time_point get_pose_estimate_time_point() const;
+  std::chrono::high_resolution_clock::time_point get_pose_estimates_time_point() const;
 
   /**
-   * @brief Returns whether the module has a new pose estimate.
+   * @brief Returns whether the module has new tag pose estimates.
    * 
-   * @return Whether the module has a new pose estimate.
+   * @return Whether the module has new tag pose estimates.
    */
-  bool has_new_pose_estimate() const;
+  bool has_new_pose_estimates() const;
 
   /**
-   * @brief Returns the last pose estimate. Sets the 'new pose estimate' status to false.
+   * @brief Returns the last tag pose estimates. This function will reset the 'new pose estimate' status.
    * 
-   * @return The last pose estimate.
+   * @return The last tag pose estimates.
    */
-  frc::AprilTagPoseEstimate get_pose_estimate();
+  std::vector<frc::AprilTagPoseEstimate> get_pose_estimates();
+
+  /**
+   * @brief Returns the transform from the robot center to the camera.
+   * 
+   * @return The transform from the robot center to the camera.
+   */
+  frc::Transform3d get_robot_to_camera_transform() const;
   
 private:
   /**
@@ -86,13 +94,14 @@ private:
   
   CameraStream* cam_stream;
   const CameraProps* cam_props;
+  const frc::Transform3d robot_to_camera;
   const std::array<double, 9> cam_matrix;
   
   frc::AprilTagDetector tag_detector;
 
-  std::chrono::high_resolution_clock::time_point pose_estimate_time_point;
-  frc::AprilTagPoseEstimate pose_estimate;
-  bool new_pose_estimate = false;
+  std::chrono::high_resolution_clock::time_point pose_estimates_time_point;
+  std::vector<frc::AprilTagPoseEstimate> pose_estimates;
+  bool new_pose_estimates = false;
 
   frc::AprilTagPoseEstimator pose_estimator;
   

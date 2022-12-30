@@ -4,6 +4,7 @@
   "field_layout" : "2022-rapidreact",
   "min_decision_margin" : 100.0,
   "pose_estimate_iterations" : 50,
+  "max_frame_delay" : 0.25,
 
   "usb_cameras" : [
     {

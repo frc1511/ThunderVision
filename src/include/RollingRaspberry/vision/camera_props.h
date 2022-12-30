@@ -2,7 +2,7 @@
 
 #include <RollingRaspberry/rolling_raspberry.h>
 #include <RollingRaspberry/vision/camera_model.h>
-#include <frc/geometry/Pose3d.h>
+#include <frc/geometry/Transform3d.h>
 
 struct CameraProps {
   // The identifier string of the camera.
@@ -18,7 +18,8 @@ struct CameraProps {
   std::string model_name = "";
   CameraModel* model = nullptr;
   
-  frc::Pose3d pose;
+  // Transformation from the robot center to the camera.
+  frc::Transform3d robot_to_camera;
 };
 
 void to_json(wpi::json& json, const CameraProps& props);

@@ -7,11 +7,11 @@ void to_json(wpi::json& json, const CameraProps& props) {
     { "height",   props.height },
     { "fps",      props.fps },
     { "model",    props.model_name },
-    { "position", props.pose.Translation() },
+    { "position", props.robot_to_camera.Translation() },
     { "rotation", wpi::json {
-                    { "roll", props.pose.Rotation().X().value() },
-                    { "pitch", props.pose.Rotation().Y().value() },
-                    { "yaw", props.pose.Rotation().Z().value() }
+                    { "roll", props.robot_to_camera.Rotation().X().value() },
+                    { "pitch", props.robot_to_camera.Rotation().Y().value() },
+                    { "yaw", props.robot_to_camera.Rotation().Z().value() }
                   }
     }
   };
@@ -33,7 +33,7 @@ void from_json(const wpi::json& json, CameraProps& props) {
 
   frc::Rotation3d rot(roll, pitch, yaw);
 
-  props.pose = frc::Pose3d(pos, rot);
+  props.robot_to_camera = frc::Transform3d(pos, rot);
 }
 
 void to_json(wpi::json& json, const USBCameraProps& props) {
