@@ -25,29 +25,35 @@ private:
   /**
    * @brief Calculates the robot pose from the apriltag pose.
    * 
-   * @param robot_to_camera Transform from the robot center to the camera.
-   * @param camera_to_tag Transform from the camera to the AprilTag.
-   * @param tag_pose Known pose of the AprilTag.
+   * @param tag_id The ID of the AprilTag.
+   * @param robot_to_tag Transform from the robot center to the AprilTag.
    * @return The calculated robot pose.
    */
-  static frc::Pose3d calculate_robot_pose(frc::Transform3d robot_to_camera, frc::Transform3d camera_to_tag, frc::Pose3d tag_pose);
+  frc::Pose3d calculate_robot_pose(int tag_id, frc::Transform3d robot_to_tag);
 
   /**
    * @brief Calculates the expected pose of the AprilTag.
    * 
    * @param robot_pose Robot pose.
-   * @param robot_to_camera Transform from the robot center to the camera.
-   * @param camera_to_tag Transform from the camera to the AprilTag.
+   * @param robot_to_tag Transform from the robot center to the AprilTag.
    * @return The calculated AprilTag pose.
    */
-  static frc::Pose3d calculate_tag_pose(frc::Pose2d robot_pose, frc::Transform3d robot_to_camera, frc::Transform3d camera_to_tag);
+  frc::Pose3d calculate_tag_pose(frc::Pose2d robot_pose, frc::Transform3d robot_to_tag);
+
+  /**
+   * @brief Returns whether the robot pose is within an acceptable vertical tolerance (used to weed out bad pose estimates).
+   * 
+   * @param robot_pose Robot pose.
+   * @return Whether the robot pose is within an acceptable vertical tolerance.
+   */
+  bool is_within_vertical_tolerance(frc::Pose3d robot_pose);
 
   /**
    * @brief Returns the last robot pose (retreived from network tables).
    * 
    * @return The last robot pose.
    */
-  static frc::Pose2d get_last_robot_pose();
+  frc::Pose2d get_last_robot_pose();
 
   VisionSettings vision_settings;
 

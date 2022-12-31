@@ -25,6 +25,12 @@ struct VisionSettings {
   // The maximum usable frame delay in seconds.
   double max_frame_delay = 0.25;
 
+  // The maximum elevation of the robot during a match in meters.
+  units::meter_t max_robot_elevation = 0.0_m;
+
+  // The tolerance for the robot's pose in meters.
+  units::meter_t robot_pose_tolerance = 0.1_m;
+
   std::vector<USBCameraProps> usb_camera_props;
   std::vector<MJPGCameraProps> mjpg_camera_props;
 };

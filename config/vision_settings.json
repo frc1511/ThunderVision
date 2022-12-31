@@ -5,6 +5,8 @@
   "min_decision_margin" : 100.0,
   "pose_estimate_iterations" : 50,
   "max_frame_delay" : 0.25,
+  "max_robot_elevation" : 0.0,
+  "robot_pose_tolerance" : 0.1,
 
   "usb_cameras" : [
     {

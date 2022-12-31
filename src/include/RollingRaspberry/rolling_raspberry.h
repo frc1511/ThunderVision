@@ -7,6 +7,7 @@
 #include <thread>
 #include <mutex>
 #include <map>
+#include <unordered_map>
 #include <utility>
 #include <fstream>
 #include <filesystem>

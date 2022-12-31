@@ -49,25 +49,25 @@ public:
   bool is_terminated() const;
 
   /**
-   * @brief Returns the time point of the last pose estimates.
+   * @brief Returns the time point of the last AprilTag detections.
    * 
    * @return The time point of the last pose estimates.
    */
-  std::chrono::high_resolution_clock::time_point get_pose_estimates_time_point() const;
+  std::chrono::high_resolution_clock::time_point get_detections_time_point() const;
 
   /**
-   * @brief Returns whether the module has new tag pose estimates.
+   * @brief Returns whether the module has new AprilTag detections.
    * 
    * @return Whether the module has new tag pose estimates.
    */
-  bool has_new_pose_estimates() const;
+  bool has_new_detections() const;
 
   /**
-   * @brief Returns the last tag pose estimates. This function will reset the 'new pose estimate' status.
+   * @brief Returns the last tag detections. This function will reset the 'new pose estimate' status.
    * 
    * @return The last tag pose estimates.
    */
-  std::vector<frc::AprilTagPoseEstimate> get_pose_estimates();
+  std::unordered_map<int, frc::AprilTagPoseEstimate> get_detections();
 
   /**
    * @brief Returns the transform from the robot center to the camera.
@@ -99,9 +99,9 @@ private:
   
   frc::AprilTagDetector tag_detector;
 
-  std::chrono::high_resolution_clock::time_point pose_estimates_time_point;
-  std::vector<frc::AprilTagPoseEstimate> pose_estimates;
-  bool new_pose_estimates = false;
+  std::chrono::high_resolution_clock::time_point detections_time_point;
+  std::unordered_map<int, frc::AprilTagPoseEstimate> detections;
+  bool new_detections = false;
 
   frc::AprilTagPoseEstimator pose_estimator;
   

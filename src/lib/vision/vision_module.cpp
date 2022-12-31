@@ -53,20 +53,20 @@ bool VisionModule::is_terminated() const {
   return thread_terminated;
 }
 
-std::chrono::high_resolution_clock::time_point VisionModule::get_pose_estimates_time_point() const {
+std::chrono::high_resolution_clock::time_point VisionModule::get_detections_time_point() const {
   std::lock_guard<std::mutex> lk(module_mutex);
-  return pose_estimates_time_point;
+  return detections_time_point;
 }
 
-bool VisionModule::has_new_pose_estimates() const {
+bool VisionModule::has_new_detections() const {
   std::lock_guard<std::mutex> lk(module_mutex);
-  return new_pose_estimates;
+  return new_detections;
 }
 
-std::vector<frc::AprilTagPoseEstimate> VisionModule::get_pose_estimates() {
+std::map<int, frc::AprilTagPoseEstimate> VisionModule::get_detections() {
   std::lock_guard<std::mutex> lk(module_mutex);
-  new_pose_estimates = false;
-  return pose_estimates;
+  new_detections = false;
+  return detections;
 }
 
 frc::Transform3d VisionModule::get_robot_to_camera_transform() const {
@@ -112,7 +112,7 @@ void VisionModule::thread_start() {
 
       cs::CvSource* output_stream = cam_stream->get_ouput_source();
 
-      std::vector<frc::AprilTagPoseEstimate> working_pose_estimates;
+      std::map<int, frc::AprilTagPoseEstimate> working_detections;
 
       for (const frc::AprilTagDetection* det : results) {
         // Skip detections with low decision margin.
@@ -128,14 +128,14 @@ void VisionModule::thread_start() {
         // Estimate the pose of the tag.
         frc::AprilTagPoseEstimate est(pose_estimator.EstimateOrthogonalIteration(*det, settings->estimate_iters));
 
-        working_pose_estimates.push_back(est);
+        working_detections.emplace(det->GetId(), est);
       }
 
-      if (!working_pose_estimates.empty()) {
+      if (!working_detections.empty()) {
         std::lock_guard<std::mutex> lk(module_mutex);
-        pose_estimates = working_pose_estimates;
-        pose_estimates_time_point = start;
-        new_pose_estimates = true;
+        detections = working_detections;
+        detections_time_point = start;
+        new_detections = true;
       }
       
       output_stream->PutFrame(frame);
