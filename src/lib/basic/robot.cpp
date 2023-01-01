@@ -1,13 +1,12 @@
 #include <RollingRaspberry/basic/robot.h>
 
-void Robot::robot_init() {
-  vision.process();
-}
+void Robot::robot_init() { }
 
 void Robot::robot_process() {
   for (Subsystem* s : subsystems) {
     s->send_feedback();
   }
+  vision.process();
 }
 
 void Robot::auto_init() {

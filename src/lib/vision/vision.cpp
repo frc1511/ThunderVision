@@ -48,27 +48,66 @@ void Vision::process() {
 
   // --- Resolving tag pose transform ambiguities ---
 
-  frc::Pose3d last_robot_pose = frc::Pose3d(get_last_robot_pose()),
-              working_lost_robot_pose;
+  frc::Pose2d last_robot_pose = get_last_robot_pose();
 
   for (const auto& [robot_to_camera, pose_estimate] : pose_estimates) {
     const auto& [tag_id, estimate] = pose_estimate;
 
-    // No ambiguity.
+    const frc::Pose3d pose1 = calculate_robot_pose(tag_id, robot_to_camera + estimate.pose1),
+                      pose2 = calculate_robot_pose(tag_id, robot_to_camera + estimate.pose2);
+
     if (estimate.GetAmbiguity() <= 0.2) {
-      frc::Transform3d camera_to_tag;
-      if (estimate.error1 <= estimate.error2) {
-        camera_to_tag = estimate.pose1;
-      } else {
-        camera_to_tag = estimate.pose2;
-      }
-      pose_evaluations.push_back(calculate_robot_pose(tag_id, robot_to_camera + camera_to_tag));
+      // No ambiguity.
+      pose_evaluations.push_back((estimate.error1 <= estimate.error2) ? pose1 : pose2);
       continue;
     }
 
     // Ambiguity D:
+
+    const bool pose1_grounded = is_within_vertical_tolerance(pose1),
+               pose2_grounded = is_within_vertical_tolerance(pose2);
+
+    if (pose1_grounded && !pose2_grounded) {
+      pose_evaluations.push_back(pose1);
+      continue;
+    }
+    else if (!pose1_grounded && pose2_grounded) {
+      pose_evaluations.push_back(pose2);
+      continue;
+    }
+
+    // If they are really close together
+    if (pose1.Translation().Distance(pose2.Translation()) < vision_settings.robot_pose_tolerance) {
+      // Modpoint?
+      pose_evaluations.push_back(pose1 + (pose2 - pose1) / 2);
+      continue;
+    }
   }
 
+  std::vector<frc::Pose2d> pose_evaluations_2d;
+
+  for (auto& pose : pose_evaluations) {
+    if (is_within_vertical_tolerance(pose)) {
+      pose_evaluations_2d.emplace_back(pose.X(), pose.Y(), pose.Rotation().Z());
+    }
+  }
+
+  {
+    // TODO: Find outliers and remove them.
+    std::vector<frc::Translation2d> translations;
+    for (auto& pose : pose_evaluations_2d) {
+      translations.push_back(pose.Translation() - last_robot_pose.Translation());
+    }
+  }
+
+  if (!pose_evaluations_2d.empty()) {
+    std::vector<std::string> pose_strs;
+    for (auto& pose : pose_evaluations_2d) {
+      pose_strs.push_back(fmt::format("{},{},{}", pose.X().value(), pose.Y().value(), pose.Rotation().Radians().value()));
+    }
+
+    NTHandler::get()->get_rasp_table()->PutStringArray("poses", pose_strs);
+  }
 }
 
 frc::Pose3d Vision::calculate_robot_pose(int tag_id, frc::Transform3d robot_to_tag) {

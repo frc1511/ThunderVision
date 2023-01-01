@@ -63,7 +63,7 @@ bool VisionModule::has_new_detections() const {
   return new_detections;
 }
 
-std::map<int, frc::AprilTagPoseEstimate> VisionModule::get_detections() {
+std::unordered_map<int, frc::AprilTagPoseEstimate> VisionModule::get_detections() {
   std::lock_guard<std::mutex> lk(module_mutex);
   new_detections = false;
   return detections;
@@ -112,7 +112,7 @@ void VisionModule::thread_start() {
 
       cs::CvSource* output_stream = cam_stream->get_ouput_source();
 
-      std::map<int, frc::AprilTagPoseEstimate> working_detections;
+      std::unordered_map<int, frc::AprilTagPoseEstimate> working_detections;
 
       for (const frc::AprilTagDetection* det : results) {
         // Skip detections with low decision margin.
