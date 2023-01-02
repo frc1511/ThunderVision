@@ -6,7 +6,9 @@
 
 class Robot {
 public:
-  void robot_init();
+  Robot();
+  ~Robot();
+
   void robot_process();
 
   void auto_init();

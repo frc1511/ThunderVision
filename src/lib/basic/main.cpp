@@ -16,8 +16,6 @@ int main(int argc, char** argv) {
   NTHandler::get()->init();
   
   Robot robot;
-
-  robot.robot_init();
   
   NTHandler::MatchMode last_mode = NTHandler::MatchMode::DISABLED;
   

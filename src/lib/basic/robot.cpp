@@ -1,6 +1,13 @@
 #include <RollingRaspberry/basic/robot.h>
+#include <RollingRaspberry/network/nt_handler.h>
 
-void Robot::robot_init() { }
+Robot::Robot() {
+  NTHandler::get()->get_rasp_table()->PutBoolean("IsRunning", true);
+}
+
+Robot::~Robot() {
+  NTHandler::get()->get_rasp_table()->PutBoolean("IsRunning", false);
+}
 
 void Robot::robot_process() {
   for (Subsystem* s : subsystems) {

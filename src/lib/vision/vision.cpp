@@ -106,7 +106,7 @@ void Vision::process() {
       pose_strs.push_back(fmt::format("{},{},{}", pose.X().value(), pose.Y().value(), pose.Rotation().Radians().value()));
     }
 
-    NTHandler::get()->get_rasp_table()->PutStringArray("poses", pose_strs);
+    NTHandler::get()->get_rasp_table()->PutStringArray("Poses", pose_strs);
   }
 }
 
