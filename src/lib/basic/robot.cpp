@@ -1,5 +1,6 @@
 #include <RollingRaspberry/basic/robot.h>
 #include <RollingRaspberry/network/nt_handler.h>
+#include <RollingRaspberry/basic/clock.h>
 
 Robot::Robot() {
   NTHandler::get()->get_rasp_table()->PutBoolean("IsRunning", true);
@@ -10,6 +11,8 @@ Robot::~Robot() {
 }
 
 void Robot::robot_process() {
+  NTHandler::get()->get_rasp_table()->PutNumber("Uptime", Clock::get()->get_uptime().value());
+
   for (Subsystem* s : subsystems) {
     s->send_feedback();
   }

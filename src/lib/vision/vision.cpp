@@ -1,5 +1,6 @@
 #include <RollingRaspberry/vision/vision.h>
 #include <RollingRaspberry/network/nt_handler.h>
+#include <RollingRaspberry/basic/clock.h>
 
 Vision::Vision() 
 : vision_settings(robot_settings.get_vision_settings()) {
@@ -106,6 +107,7 @@ void Vision::process() {
       pose_strs.push_back(fmt::format("{},{},{}", pose.X().value(), pose.Y().value(), pose.Rotation().Radians().value()));
     }
 
+    NTHandler::get()->get_rasp_table()->PutNumber("PoseTime", Clock::get()->get_uptime().value());
     NTHandler::get()->get_rasp_table()->PutStringArray("Poses", pose_strs);
   }
 }
