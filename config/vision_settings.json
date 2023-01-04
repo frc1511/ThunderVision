@@ -14,17 +14,17 @@
       "host_stream" : true,
       "props" : {
         "name" : "intake_camera",
-        "model" : "facetime_imac_4k_21.5_inch_2017",
+        "model" : "microsoft_lifecam_hd_3000",
         "width" : 320,
         "height" : 240,
         "fps" : 30,
         "position" : {
           "x" : 0,
-          "y" : 0,
-          "z" : 0
+          "y" : 0.4191,
+          "z" : 0.1825625
         },
         "rotation" : {
-          "roll" : 0,
+          "roll" : 1.57079632679,
           "pitch" : 0,
           "yaw" : 0
         }
