@@ -27,9 +27,9 @@ private:
    * 
    * @param tag_id The ID of the AprilTag.
    * @param robot_to_tag Transform from the robot center to the AprilTag.
-   * @return The calculated robot pose.
+   * @return The calculated robot pose, or std::nullopt if the tag cannot be located on the field.
    */
-  frc::Pose3d calculate_robot_pose(int tag_id, frc::Transform3d robot_to_tag);
+  std::optional<frc::Pose3d> calculate_robot_pose(int tag_id, frc::Transform3d robot_to_tag);
 
   /**
    * @brief Calculates the expected pose of the AprilTag.
@@ -47,13 +47,6 @@ private:
    * @return Whether the robot pose is on the field.
    */
   bool is_pose_on_field(frc::Pose3d robot_pose);
-
-  /**
-   * @brief Returns the last robot pose (retreived from network tables).
-   * 
-   * @return The last robot pose.
-   */
-  frc::Pose2d get_last_robot_pose();
 
   VisionSettings vision_settings;
 

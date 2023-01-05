@@ -42,30 +42,40 @@ void Vision::process() {
 
   // --- Resolving tag pose ambiguities ---
 
-  frc::Pose2d last_robot_pose = get_last_robot_pose();
-
   for (const auto& [robot_to_camera, pose_estimate] : pose_estimates) {
     const auto& [timestamp, tag_id, estimate] = pose_estimate;
 
-    const frc::Pose3d pose1 = calculate_robot_pose(tag_id, robot_to_camera + estimate.pose1),
-                      pose2 = calculate_robot_pose(tag_id, robot_to_camera + estimate.pose2);
+    std::optional<frc::Pose3d> _pose1 = calculate_robot_pose(tag_id, robot_to_camera + estimate.pose1),
+                               _pose2 = calculate_robot_pose(tag_id, robot_to_camera + estimate.pose2);
+
+    frc::Pose3d pose1 = _pose1.value_or(frc::Pose3d()),
+                pose2 = _pose2.value_or(frc::Pose3d());
+
+    bool pose1_good = _pose1.has_value(),
+         pose2_good = _pose2.has_value();
 
     if (estimate.GetAmbiguity() <= 0.2) {
       // No ambiguity.
-      pose_evaluations.emplace(timestamp, (estimate.error1 <= estimate.error2) ? pose1 : pose2);
+      bool which_pose = estimate.error1 <= estimate.error2;
+      if (which_pose && pose1_good) {
+        pose_evaluations.emplace(timestamp, pose1);
+      }
+      else if (!which_pose && pose2_good) {
+        pose_evaluations.emplace(timestamp, pose2);
+      }
       continue;
     }
 
     // Ambiguity D:
 
-    const bool pose1_on_field = is_pose_on_field(pose1),
-               pose2_on_field = is_pose_on_field(pose2);
+    pose1_good *= is_pose_on_field(pose1);
+    pose2_good *= is_pose_on_field(pose2);
 
-    if (pose1_on_field && !pose2_on_field) {
+    if (pose1_good && !pose2_good) {
       pose_evaluations.emplace(timestamp, pose1);
       continue;
     }
-    else if (!pose1_on_field && pose2_on_field) {
+    else if (!pose1_good && pose2_good) {
       pose_evaluations.emplace(timestamp, pose2);
       continue;
     }
@@ -93,25 +103,17 @@ void Vision::process() {
   }
 }
 
-frc::Pose3d Vision::calculate_robot_pose(int tag_id, frc::Transform3d robot_to_tag) {
-  frc::Pose3d tag_pose = vision_settings.field_layout->GetTagPose(tag_id).value();
+std::optional<frc::Pose3d> Vision::calculate_robot_pose(int tag_id, frc::Transform3d robot_to_tag) {
+  std::optional<frc::Pose3d> tag_pose = vision_settings.field_layout->GetTagPose(tag_id);
+  if (!tag_pose.has_value()) return std::nullopt;
+
   const frc::Transform3d tag_to_robot = robot_to_tag.Inverse();
-  return tag_pose + tag_to_robot;
+  return tag_pose.value() + tag_to_robot;
 }
 
 frc::Pose3d Vision::calculate_tag_pose(frc::Pose2d _robot_pose, frc::Transform3d robot_to_tag) {
   const frc::Pose3d robot_pose(_robot_pose);
   return robot_pose + robot_to_tag;
-}
-
-frc::Pose2d Vision::get_last_robot_pose() {
-  auto sd = NTHandler::get()->get_smart_dashboard();
-
-  units::meter_t x = units::meter_t(sd->GetNumber("robot_pose_x", 0.0));
-  units::meter_t y = units::meter_t(sd->GetNumber("robot_pose_y", 0.0));
-  frc::Rotation2d rot = frc::Rotation2d(units::degree_t(sd->GetNumber("robot_pose_rot", 0.0)));
-
-  return frc::Pose2d(x, y, rot);
 }
 
 bool Vision::is_pose_on_field(frc::Pose3d pose) {
