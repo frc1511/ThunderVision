@@ -1,7 +1,7 @@
 {
   "apriltag_family" : "tag16h5",
   "apriltag_size" : 0.1524,
-  "field_layout" : "2022-rapidreact",
+  "field_layout" : "g3",
   "min_decision_margin" : 100.0,
   "pose_estimate_iterations" : 50,
   "max_frame_delay" : 0.25,

@@ -14,7 +14,7 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release")
 endif()
 
-set(CONFIG_JSON_DIR "/boot/frc1511" CACHE STRING "Config JSON Path")
+set(CONFIG_JSON_DIR "/var/frc1511" CACHE STRING "Config JSON Path")
 option(BUILD_TOOLS "Build assorted tools" ON)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)

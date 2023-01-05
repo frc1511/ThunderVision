@@ -19,10 +19,12 @@ echo "Installing program 'RollingRaspberry'"
 # Install the program.
 cmake --install $PROJECT_DIR/build
 
-echo "Installing configuration json files to '/boot/frc1511/'"
+echo "Installing configuration json files to '/var/frc1511/'"
 
-# Install the config file.
-cp -r $PROJECT_DIR/config /boot/frc1511
+# Install the config files.
+
+mkdir -p /var/frc1511
+cp $(find $PROJECT_DIR/config -name '*.json') /var/frc1511
 
 echo "Installing systemd service 'RollingRaspberry.service'"
 
