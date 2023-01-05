@@ -1,5 +1,6 @@
 #include <RollingRaspberry/vision/vision_module.h>
 #include <frc/apriltag/AprilTagDetector_cv.h>
+#include <RollingRaspberry/basic/clock.h>
 
 VisionModule::VisionModule(CameraStream* stream, const VisionSettings* settings)
 : settings(settings), cam_stream(stream), cam_props(&cam_stream->get_props()),
@@ -53,17 +54,12 @@ bool VisionModule::is_terminated() const {
   return thread_terminated;
 }
 
-std::chrono::high_resolution_clock::time_point VisionModule::get_detections_time_point() const {
-  std::lock_guard<std::mutex> lk(module_mutex);
-  return detections_time_point;
-}
-
 bool VisionModule::has_new_detections() const {
   std::lock_guard<std::mutex> lk(module_mutex);
   return new_detections;
 }
 
-std::unordered_map<int, frc::AprilTagPoseEstimate> VisionModule::get_detections() {
+std::map<units::second_t, std::pair<int, frc::AprilTagPoseEstimate>> VisionModule::get_detections() {
   std::lock_guard<std::mutex> lk(module_mutex);
   new_detections = false;
   return detections;
@@ -101,10 +97,11 @@ void VisionModule::thread_start() {
       continue;
     }
     
-    std::uint64_t frame_time = cam_stream->get_frame(frame);
+    std::uint64_t frame_res = cam_stream->get_frame(frame);
+    units::second_t frame_time = Clock::get()->get_uptime();
     
     // Successfully grabbed a frame.
-    if (frame_time) {
+    if (frame_res) {
       cv::cvtColor(frame, frame_gray, cv::COLOR_RGB2GRAY);
       
       // Detect tags.
@@ -112,7 +109,7 @@ void VisionModule::thread_start() {
 
       cs::CvSource* output_stream = cam_stream->get_ouput_source();
 
-      std::unordered_map<int, frc::AprilTagPoseEstimate> working_detections;
+      std::map<units::second_t, std::pair<int, frc::AprilTagPoseEstimate>> working_detections;
 
       for (const frc::AprilTagDetection* det : results) {
         // Skip detections with low decision margin.
@@ -128,13 +125,18 @@ void VisionModule::thread_start() {
         // Estimate the pose of the tag.
         frc::AprilTagPoseEstimate est(pose_estimator.EstimateOrthogonalIteration(*det, settings->estimate_iters));
 
-        working_detections.emplace(det->GetId(), est);
+        working_detections.emplace(frame_time, std::make_pair(det->GetId(), est));
       }
 
       if (!working_detections.empty()) {
         std::lock_guard<std::mutex> lk(module_mutex);
-        detections = working_detections;
-        detections_time_point = start;
+        // Don't overwrite detections that haven't been processed yet.
+        if (new_detections) {
+          detections.insert(working_detections.begin(), working_detections.end());
+        }
+        else {
+          detections = working_detections;
+        }
         new_detections = true;
       }
       

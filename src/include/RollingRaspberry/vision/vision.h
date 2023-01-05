@@ -41,12 +41,12 @@ private:
   frc::Pose3d calculate_tag_pose(frc::Pose2d robot_pose, frc::Transform3d robot_to_tag);
 
   /**
-   * @brief Returns whether the robot pose is within an acceptable vertical tolerance (used to weed out bad pose estimates).
+   * @brief Returns whether the robot pose is on the field (with a tolerance).
    * 
    * @param robot_pose Robot pose.
-   * @return Whether the robot pose is within an acceptable vertical tolerance.
+   * @return Whether the robot pose is on the field.
    */
-  bool is_within_vertical_tolerance(frc::Pose3d robot_pose);
+  bool is_pose_on_field(frc::Pose3d robot_pose);
 
   /**
    * @brief Returns the last robot pose (retreived from network tables).

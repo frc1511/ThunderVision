@@ -8,6 +8,7 @@
 #include <frc/apriltag/AprilTagPoseEstimator.h>
 #include <frc/apriltag/AprilTagPoseEstimate.h>
 #include <frc/geometry/Transform3d.h>
+#include <units/time.h>
 #include <opencv2/opencv.hpp>
 #include <cscore.h>
 #include <cscore_cv.h>
@@ -49,13 +50,6 @@ public:
   bool is_terminated() const;
 
   /**
-   * @brief Returns the time point of the last AprilTag detections.
-   * 
-   * @return The time point of the last pose estimates.
-   */
-  std::chrono::high_resolution_clock::time_point get_detections_time_point() const;
-
-  /**
    * @brief Returns whether the module has new AprilTag detections.
    * 
    * @return Whether the module has new tag pose estimates.
@@ -67,7 +61,7 @@ public:
    * 
    * @return The last tag pose estimates.
    */
-  std::unordered_map<int, frc::AprilTagPoseEstimate> get_detections();
+  std::map<units::second_t, std::pair<int, frc::AprilTagPoseEstimate>> get_detections();
 
   /**
    * @brief Returns the transform from the robot center to the camera.
@@ -99,8 +93,7 @@ private:
   
   frc::AprilTagDetector tag_detector;
 
-  std::chrono::high_resolution_clock::time_point detections_time_point;
-  std::unordered_map<int, frc::AprilTagPoseEstimate> detections;
+  std::map<units::second_t, std::pair<int, frc::AprilTagPoseEstimate>> detections;
   bool new_detections = false;
 
   frc::AprilTagPoseEstimator pose_estimator;

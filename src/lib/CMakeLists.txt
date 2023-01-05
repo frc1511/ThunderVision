@@ -2,6 +2,7 @@ add_thunder_sources(
   "${THUNDER_SRC_DIR}/basic/main.cpp"
   "${THUNDER_SRC_DIR}/basic/robot.cpp"
   "${THUNDER_SRC_DIR}/basic/robot_settings.cpp"
+  "${THUNDER_SRC_DIR}/basic/clock.cpp"
   "${THUNDER_SRC_DIR}/network/nt_handler.cpp"
   "${THUNDER_SRC_DIR}/vision/vision.cpp"
   "${THUNDER_SRC_DIR}/vision/vision_module.cpp"

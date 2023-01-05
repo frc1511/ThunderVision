@@ -24,90 +24,71 @@ Vision::~Vision() = default;
 void Vision::reset_to_mode(NTHandler::MatchMode mode) { }
 
 void Vision::process() {
-  // --- Resolving tag pose estimates that are within the delay from vision modules ---
-
-  using PoseEstimation = std::pair<int, frc::AprilTagPoseEstimate>;
+  using PoseEstimation = std::tuple<units::second_t, int, frc::AprilTagPoseEstimate>;
   std::vector<std::pair<frc::Transform3d, PoseEstimation>> pose_estimates;
 
-  std::vector<frc::Pose3d> pose_evaluations;
-
-  using namespace std::chrono_literals;
-  std::chrono::high_resolution_clock::time_point now = std::chrono::high_resolution_clock::now();
-
-  std::chrono::milliseconds max_frame_delay = std::chrono::milliseconds(static_cast<std::size_t>(vision_settings.max_frame_delay * 1000));
+  // --- Getting new detections ---
 
   for (auto& mod : vision_modules) {
     if (mod->has_new_detections()) {
-      // If time since last pose estimate is less than or equal to delay, add to vector.
-      if (now - mod->get_detections_time_point() <= max_frame_delay) {
-        for (auto& det : mod->get_detections()) {
-          pose_estimates.emplace_back(mod->get_robot_to_camera_transform(), det);
-        }
+      for (const auto [timestamp, det] : mod->get_detections()) {
+        const auto& [tag_id, estimate] = det;
+        pose_estimates.emplace_back(mod->get_robot_to_camera_transform(), std::make_tuple(timestamp, tag_id, estimate));
       }
     }
   }
 
-  // --- Resolving tag pose transform ambiguities ---
+  std::map<units::second_t, frc::Pose3d> pose_evaluations;
+
+  // --- Resolving tag pose ambiguities ---
 
   frc::Pose2d last_robot_pose = get_last_robot_pose();
 
   for (const auto& [robot_to_camera, pose_estimate] : pose_estimates) {
-    const auto& [tag_id, estimate] = pose_estimate;
+    const auto& [timestamp, tag_id, estimate] = pose_estimate;
 
     const frc::Pose3d pose1 = calculate_robot_pose(tag_id, robot_to_camera + estimate.pose1),
                       pose2 = calculate_robot_pose(tag_id, robot_to_camera + estimate.pose2);
 
     if (estimate.GetAmbiguity() <= 0.2) {
       // No ambiguity.
-      pose_evaluations.push_back((estimate.error1 <= estimate.error2) ? pose1 : pose2);
+      pose_evaluations.emplace(timestamp, (estimate.error1 <= estimate.error2) ? pose1 : pose2);
       continue;
     }
 
     // Ambiguity D:
 
-    const bool pose1_grounded = is_within_vertical_tolerance(pose1),
-               pose2_grounded = is_within_vertical_tolerance(pose2);
+    const bool pose1_on_field = is_pose_on_field(pose1),
+               pose2_on_field = is_pose_on_field(pose2);
 
-    if (pose1_grounded && !pose2_grounded) {
-      pose_evaluations.push_back(pose1);
+    if (pose1_on_field && !pose2_on_field) {
+      pose_evaluations.emplace(timestamp, pose1);
       continue;
     }
-    else if (!pose1_grounded && pose2_grounded) {
-      pose_evaluations.push_back(pose2);
-      continue;
-    }
-
-    // If they are really close together
-    if (pose1.Translation().Distance(pose2.Translation()) < vision_settings.robot_pose_tolerance) {
-      // Modpoint?
-      pose_evaluations.push_back(pose1 + (pose2 - pose1) / 2);
+    else if (!pose1_on_field && pose2_on_field) {
+      pose_evaluations.emplace(timestamp, pose2);
       continue;
     }
   }
 
-  std::vector<frc::Pose2d> pose_evaluations_2d;
+  // --- Validating poses ---
 
-  for (auto& pose : pose_evaluations) {
-    if (is_within_vertical_tolerance(pose)) {
-      pose_evaluations_2d.emplace_back(pose.X(), pose.Y(), pose.Rotation().Z());
+  std::map<units::second_t, frc::Pose2d> pose_evaluations_2d;
+
+  for (const auto& [timestamp, pose] : pose_evaluations) {
+    if (is_pose_on_field(pose)) {
+      pose_evaluations_2d.emplace(timestamp, frc::Pose2d(pose.X(), pose.Y(), pose.Rotation().Z()));
     }
   }
 
-  {
-    // TODO: Find outliers and remove them.
-    std::vector<frc::Translation2d> translations;
-    for (auto& pose : pose_evaluations_2d) {
-      translations.push_back(pose.Translation() - last_robot_pose.Translation());
-    }
-  }
+  // --- Sending poses ---
 
   if (!pose_evaluations_2d.empty()) {
     std::vector<std::string> pose_strs;
-    for (auto& pose : pose_evaluations_2d) {
-      pose_strs.push_back(fmt::format("{},{},{}", pose.X().value(), pose.Y().value(), pose.Rotation().Radians().value()));
+    for (const auto& [timestamp, pose] : pose_evaluations_2d) {
+      pose_strs.push_back(fmt::format("{},{},{},{}", timestamp.value(), pose.X().value(), pose.Y().value(), pose.Rotation().Radians().value()));
     }
 
-    NTHandler::get()->get_rasp_table()->PutNumber("PoseTime", Clock::get()->get_uptime().value());
     NTHandler::get()->get_rasp_table()->PutStringArray("Poses", pose_strs);
   }
 }
@@ -133,8 +114,16 @@ frc::Pose2d Vision::get_last_robot_pose() {
   return frc::Pose2d(x, y, rot);
 }
 
-bool Vision::is_within_vertical_tolerance(frc::Pose3d robot_pose) {
-  if (robot_pose.Z() - vision_settings.max_robot_elevation > vision_settings.robot_pose_tolerance) return false;
-  if (robot_pose.Z() < -vision_settings.robot_pose_tolerance) return false;
-  return true;
+bool Vision::is_pose_on_field(frc::Pose3d pose) {
+  const units::meter_t tol = vision_settings.robot_pose_tolerance;
+
+  const units::meter_t min_z = 0_m - tol, max_z = vision_settings.max_robot_elevation + tol;
+  const units::meter_t min_x = 0_m - tol, max_x = 8.2296_m + tol;
+  const units::meter_t min_y = 0_m - tol, max_y = 16.4592_m + tol;
+
+  const units::meter_t x = pose.X(), y = pose.Y(), z = pose.Z();
+  
+  return (x >= min_x && x <= max_x) &&
+         (y >= min_y && y <= max_y) &&
+         (z >= min_z && z <= max_z);
 }
