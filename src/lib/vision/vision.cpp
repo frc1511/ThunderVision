@@ -94,12 +94,10 @@ void Vision::process() {
   // --- Sending poses ---
 
   if (!pose_evaluations_2d.empty()) {
-    std::vector<std::string> pose_strs;
+    std::shared_ptr<nt::NetworkTable> poses_subtable = NTHandler::get()->get_rasp_table()->GetSubTable("Poses");
     for (const auto& [timestamp, pose] : pose_evaluations_2d) {
-      pose_strs.push_back(fmt::format("{},{},{},{}", timestamp.value(), pose.X().value(), pose.Y().value(), pose.Rotation().Radians().value()));
+      poses_subtable->PutString(std::to_string(timestamp.value()), fmt::format("{},{},{}", pose.X().value(), pose.Y().value(), pose.Rotation().Radians().value()));
     }
-
-    NTHandler::get()->get_rasp_table()->PutStringArray("Poses", pose_strs);
   }
 }
 

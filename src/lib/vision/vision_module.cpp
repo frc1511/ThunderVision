@@ -98,7 +98,7 @@ void VisionModule::thread_start() {
     }
     
     std::uint64_t frame_res = cam_stream->get_frame(frame);
-    units::second_t frame_time = Clock::get()->get_uptime();
+    units::second_t frame_time = Clock::get()->get_time_since_epoch();
     
     // Successfully grabbed a frame.
     if (frame_res) {
@@ -116,11 +116,11 @@ void VisionModule::thread_start() {
         if (det->GetDecisionMargin() < settings->min_decision_margin) continue;
 
         // Visualize detection during debug.
-#ifndef NDEBUG
+/* #ifndef NDEBUG */
         if (output_stream) {
           visualize_detection(frame, *det);
         }
-#endif
+/* #endif */
 
         // Estimate the pose of the tag.
         frc::AprilTagPoseEstimate est(pose_estimator.EstimateOrthogonalIteration(*det, settings->estimate_iters));
