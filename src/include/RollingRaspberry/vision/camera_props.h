@@ -14,7 +14,7 @@ struct CameraProps {
   
   // The fps of the camera.
   std::size_t fps = 30;
-
+  
   std::string model_name = "";
   CameraModel* model = nullptr;
   

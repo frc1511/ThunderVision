@@ -1,4 +1,5 @@
 #include <RollingRaspberry/vision/camera_props.h>
+#include <frc/geometry/Pose3d.h>
 
 void to_json(wpi::json& json, const CameraProps& props) {
   json = wpi::json {
@@ -7,13 +8,7 @@ void to_json(wpi::json& json, const CameraProps& props) {
     { "height",   props.height },
     { "fps",      props.fps },
     { "model",    props.model_name },
-    { "position", props.robot_to_camera.Translation() },
-    { "rotation", wpi::json {
-                    { "roll", props.robot_to_camera.Rotation().X().value() },
-                    { "pitch", props.robot_to_camera.Rotation().Y().value() },
-                    { "yaw", props.robot_to_camera.Rotation().Z().value() }
-                  }
-    }
+    { "transform", frc::Pose3d(props.robot_to_camera.Translation(), props.robot_to_camera.Rotation()) },
   };
 }
 
@@ -23,17 +18,8 @@ void from_json(const wpi::json& json, CameraProps& props) {
   props.height = json.at("height").get<std::size_t>();
   props.fps    = json.at("fps").get<std::size_t>();
   props.model_name = json.at("model").get<std::string>();
-  frc::Translation3d pos = json.at("position").get<frc::Translation3d>();
-
-  wpi::json rot_json = json.at("rotation");
-
-  units::radian_t roll = units::radian_t(rot_json.at("roll").get<double>());
-  units::radian_t pitch = units::radian_t(rot_json.at("pitch").get<double>());
-  units::radian_t yaw = units::radian_t(rot_json.at("yaw").get<double>());
-
-  frc::Rotation3d rot(roll, pitch, yaw);
-
-  props.robot_to_camera = frc::Transform3d(pos, rot);
+  frc::Pose3d pose = json.at("transform").get<frc::Pose3d>();
+  props.robot_to_camera = frc::Transform3d(pose.Translation(), pose.Rotation());
 }
 
 void to_json(wpi::json& json, const USBCameraProps& props) {

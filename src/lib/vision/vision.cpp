@@ -68,8 +68,8 @@ void Vision::process() {
 
     // Ambiguity D:
 
-    pose1_good *= is_pose_on_field(pose1);
-    pose2_good *= is_pose_on_field(pose2);
+    pose1_good = pose1_good && is_pose_on_field(pose1);
+    pose2_good = pose2_good && is_pose_on_field(pose2);
 
     if (pose1_good && !pose2_good) {
       pose_evaluations.emplace(timestamp, pose1);
@@ -97,6 +97,10 @@ void Vision::process() {
     std::shared_ptr<nt::NetworkTable> poses_subtable = NTHandler::get()->get_rasp_table()->GetSubTable("Poses");
     for (const auto& [timestamp, pose] : pose_evaluations_2d) {
       poses_subtable->PutString(std::to_string(timestamp.value()), fmt::format("{},{},{}", pose.X().value(), pose.Y().value(), pose.Rotation().Radians().value()));
+      
+      NTHandler::get()->get_smart_dashboard()->PutNumber("thunderdashboard_drive_x_pos", pose.X().value());
+      NTHandler::get()->get_smart_dashboard()->PutNumber("thunderdashboard_drive_y_pos", pose.Y().value());
+      NTHandler::get()->get_smart_dashboard()->PutNumber("thunderdashboard_drive_ang", pose.Rotation().Radians().value());
     }
   }
 }
