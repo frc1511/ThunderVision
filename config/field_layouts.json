@@ -1,12 +1,12 @@
 {
   "g3" : {
     "tags" : [ {
-      "ID" : 10,
+      "ID" : 29,
       "pose" : {
         "translation" : {
           "x" : 0.0,
           "y" : 0.0,
-          "z" : 0.1825625
+          "z" : 0.1857375
         },
         "rotation" : {
           "quaternion" : {

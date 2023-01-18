@@ -75,7 +75,7 @@ private:
    * @brief Starts the Vision Module thread.
    */
   void thread_start();
-
+  
   /**
    * @brief Visualizes a AprilTag detection.
    * 
@@ -83,19 +83,20 @@ private:
    * @param detection The AprilTag detection to draw.
    */
   static void visualize_detection(cv::Mat& frame, const frc::AprilTagDetection& detection);
-
+  
   const VisionSettings* settings;
   
   CameraStream* cam_stream;
   const CameraProps* cam_props;
   const frc::Transform3d robot_to_camera;
-  const std::array<double, 9> cam_matrix;
+  
+  std::array<double, 9> int_mat;
   
   frc::AprilTagDetector tag_detector;
-
+  
   std::map<units::second_t, std::pair<int, frc::AprilTagPoseEstimate>> detections;
   bool new_detections = false;
-
+  
   frc::AprilTagPoseEstimator pose_estimator;
   
   bool thread_running = false;

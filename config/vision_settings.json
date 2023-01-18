@@ -15,20 +15,20 @@
       "props" : {
         "name" : "intake_camera",
         "model" : "microsoft_lifecam_hd_3000",
-        "width" : 1280,
-        "height" : 720,
+        "width" : 640,
+        "height" : 480,
         "fps" : 30,
         "transform" : {
           "translation" : {
             "x" : 0.0,
             "y" : 0.4191,
-            "z" : 0.1825625
+            "z" : 0.1857375
           },
           "rotation" : {
             "quaternion" : {
               "W" : 0,
-              "X" : 0.7071067812,
-              "Y" : 0,
+              "X" : 0,
+              "Y" : -0.7071067812,
               "Z" : 0.7071067812
             }
           }

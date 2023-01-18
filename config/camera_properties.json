@@ -7,7 +7,7 @@
       0,       932.375, 406.368,
       0,       0,       1
     ],
-    "distortion_coefficients" : [ 0, 0, 0, 0, 0 ]
+    "extrinsic_matrix" : [ 0, 0, 0, 0, 0 ]
   },
   "logitech_hd_pro_c920" : {
     "width" : 1920,
@@ -17,17 +17,27 @@
       0,        1454.699, 558.481,
       0,        0,        1
     ],
-    "distortion_coefficients" : [ 0, 0, 0, 0, 0 ]
+    "extrinsic_matrix" : [ 0, 0, 0, 0, 0 ]
+  },
+  "microsoft_lifecam_hd_3000_2" : {
+    "width" : 640,
+    "height" : 480,
+    "intrinsic_matrix" : [
+      699.3778103158814, 0,            345.6059345433618,
+      0,            677.7161226393544, 207.12741326228522,
+      0,            0,            1
+    ],
+    "extrinsic_matrix" : [ 0, 0, 0, 0, 0 ]
   },
   "microsoft_lifecam_hd_3000" : {
-    "width" : 1280,
-    "height" : 720,
+    "width" : 640,
+    "height" : 480,
     "intrinsic_matrix" : [
       663.78948975, 0,            330.20644967,
       0,            666.20343018, 227.651095,
       0,            0,            1
     ],
-    "distortion_coefficients" : [ 0, 0, 0, 0, 0 ]
+    "extrinsic_matrix" : [ 1.57424203e-1, -1.20538867, -5.27502807e-4, 1.06480837e-4, 1.95141243 ]
   },
   "limelight_2+" : {
     "width" : 320,
@@ -37,6 +47,6 @@
       0, 1, 1,
       0, 0, 1
     ],
-    "distortion_coefficients" : [ 0, 0, 0, 0, 0 ]
+    "extrinsic_matrix" : [ 0, 0, 0, 0, 0 ]
   }
 }

@@ -19,20 +19,20 @@ struct CameraModel {
    * 
    * Values are in pixels.
    */
-  std::array<double, 9> matrix;
+  std::array<double, 9> intrinsic_matrix;
 
-  // Distortion coefficients of the camera.
-  std::array<double, 5> dist_coeffs;
+  // Extrinsic matrix of the camera (distortion coefficients).
+  std::array<double, 5> extrinsic_matrix;
 
   /**
-   * @brief Returns the camera matrix adjusted for the frame size.
+   * @brief Returns the intrinsic camera matrix adjusted for the frame size.
    * 
    * @param width Width of the frame.
    * @param height Height of the frame.
    * 
-   * @return The camera matrix adjusted for the frame size.
+   * @return The intrinsic camera matrix adjusted for the frame size.
    */
-  std::array<double, 9> get_adjusted_matrix(std::size_t width, std::size_t height) const;
+  std::array<double, 9> get_adjusted_intrinsic_matrix(std::size_t width, std::size_t height) const;
 };
 
 void to_json(wpi::json& json, const CameraModel& model);

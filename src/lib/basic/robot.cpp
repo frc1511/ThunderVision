@@ -4,6 +4,8 @@
 
 Robot::Robot() {
   NTHandler::get()->get_rasp_table()->PutBoolean("IsRunning", true);
+  
+  Clock::get()->init();
 }
 
 Robot::~Robot() {
