@@ -14,6 +14,7 @@
 
 #include <cmath>
 #include <csignal>
+#include <cerrno>
 
 #include <fmt/format.h>
 
