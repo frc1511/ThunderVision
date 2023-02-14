@@ -1,6 +1,5 @@
 #include <RollingRaspberry/vision/vision_module.h>
 #include <frc/apriltag/AprilTagDetector_cv.h>
-#include <RollingRaspberry/basic/clock.h>
 
 VisionModule::VisionModule(CameraStream* stream, const VisionSettings* settings)
 : settings(settings), cam_stream(stream), cam_props(&cam_stream->get_props()),
@@ -53,7 +52,7 @@ bool VisionModule::has_new_detections() const {
   return new_detections;
 }
 
-std::map<units::second_t, std::pair<int, frc::AprilTagPoseEstimate>> VisionModule::get_detections() {
+std::map<Clock::TimePoint, std::pair<int, frc::AprilTagPoseEstimate>> VisionModule::get_detections() {
   std::lock_guard<std::mutex> lk(module_mutex);
   new_detections = false;
   return detections;
@@ -71,12 +70,12 @@ void VisionModule::terminate() {
 void VisionModule::thread_start() {
   using namespace std::chrono_literals;
   
-  std::chrono::high_resolution_clock::time_point start, end;
+  Clock::TimePoint start;
   
   cv::Mat frame, frame_gray, frame_undistorted;
   
   while (true) {
-    start = std::chrono::high_resolution_clock::now();
+    start = Clock::get_time_point();
     
     bool running = false;
     {
@@ -92,7 +91,7 @@ void VisionModule::thread_start() {
     }
     
     std::uint64_t frame_res = cam_stream->get_frame(frame_undistorted);
-    units::second_t frame_time = Clock::get()->get_roborio_uptime();
+    Clock::TimePoint frame_time_point = Clock::get_time_point();
     
     // Successfully grabbed a frame.
     if (frame_res) {
@@ -104,7 +103,7 @@ void VisionModule::thread_start() {
       // Output stream (optional - may be nullptr).
       cs::CvSource* output_stream = cam_stream->get_ouput_source();
       
-      std::map<units::second_t, std::pair<int, frc::AprilTagPoseEstimate>> working_detections;
+      std::map<Clock::TimePoint, std::pair<int, frc::AprilTagPoseEstimate>> working_detections;
       
       for (const frc::AprilTagDetection* det : results) {
         // Skip detections with low decision margin.
@@ -120,7 +119,7 @@ void VisionModule::thread_start() {
         // Estimate the pose of the tag.
         frc::AprilTagPoseEstimate est(pose_estimator.EstimateOrthogonalIteration(*det, settings->estimate_iters));
         
-        working_detections.emplace(frame_time, std::make_pair(det->GetId(), est));
+        working_detections.emplace(frame_time_point, std::make_pair(det->GetId(), est));
       }
       
       if (!working_detections.empty()) {
@@ -142,14 +141,12 @@ void VisionModule::thread_start() {
     }
     
     // Sleep for the remainder of the frame period.
-    
-    end = std::chrono::high_resolution_clock::now();
-    double dur = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() * 0.001;
-    double period = 1.0 / cam_stream->get_props().fps;
+
+    units::second_t dur = Clock::get_time_since_point(start);
+    units::second_t period = 1_s / cam_stream->get_props().fps;
     
     if (dur < period) {
-      std::size_t sleep_time = (period - dur) * 1000.0;
-      std::this_thread::sleep_for(std::chrono::milliseconds(sleep_time));
+      std::this_thread::sleep_for(std::chrono::milliseconds((long long)(period - dur).value() * 1000));
     }
   }
   

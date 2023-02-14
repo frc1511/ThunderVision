@@ -1,23 +1,21 @@
 #include <RollingRaspberry/basic/robot.h>
 #include <RollingRaspberry/network/nt_handler.h>
+#include <RollingRaspberry/network/roborio_tcp_comm_handler.h>
 #include <RollingRaspberry/basic/clock.h>
 
 Robot::Robot() {
-  NTHandler::get()->get_rasp_table()->PutBoolean("IsRunning", true);
-  
-  Clock::get()->init();
+  Clock::init();
+  RoboRIOTCPCommHandler::get()->init();
 }
 
-Robot::~Robot() {
-  NTHandler::get()->get_rasp_table()->PutBoolean("IsRunning", false);
-}
+Robot::~Robot() { }
 
 void Robot::robot_process() {
-  NTHandler::get()->get_rasp_table()->PutNumber("Uptime", Clock::get()->get_uptime().value());
-
   for (Subsystem* s : subsystems) {
     s->send_feedback();
   }
+
+  RoboRIOTCPCommHandler::get()->process();
   vision.process();
 }
 

@@ -3,6 +3,7 @@
 #include <RollingRaspberry/rolling_raspberry.h>
 #include <RollingRaspberry/vision/camera.h>
 #include <RollingRaspberry/vision/vision_settings.h>
+#include <RollingRaspberry/basic/clock.h>
 #include <frc/apriltag/AprilTagDetector.h>
 #include <frc/apriltag/AprilTagDetection.h>
 #include <frc/apriltag/AprilTagPoseEstimator.h>
@@ -61,7 +62,7 @@ public:
    * 
    * @return The last tag pose estimates.
    */
-  std::map<units::second_t, std::pair<int, frc::AprilTagPoseEstimate>> get_detections();
+  std::map<Clock::TimePoint, std::pair<int, frc::AprilTagPoseEstimate>> get_detections();
 
   /**
    * @brief Returns the transform from the robot center to the camera.
@@ -94,7 +95,7 @@ private:
   
   frc::AprilTagDetector tag_detector;
   
-  std::map<units::second_t, std::pair<int, frc::AprilTagPoseEstimate>> detections;
+  std::map<Clock::TimePoint, std::pair<int, frc::AprilTagPoseEstimate>> detections;
   bool new_detections = false;
   
   frc::AprilTagPoseEstimator pose_estimator;

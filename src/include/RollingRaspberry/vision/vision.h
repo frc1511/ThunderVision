@@ -40,14 +40,6 @@ private:
    */
   frc::Pose3d calculate_tag_pose(frc::Pose2d robot_pose, frc::Transform3d robot_to_tag);
 
-  /**
-   * @brief Returns whether the robot pose is on the field (with a tolerance).
-   * 
-   * @param robot_pose Robot pose.
-   * @return Whether the robot pose is on the field.
-   */
-  bool is_pose_on_field(frc::Pose3d robot_pose);
-
   VisionSettings vision_settings;
 
   std::vector<USBCameraStream> usb_cameras;

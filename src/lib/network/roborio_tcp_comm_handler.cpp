@@ -9,24 +9,25 @@
 /*
   Message structure:
   
-  pose1_x     - 4 bytes (float)
-  pose1_y     - 4 bytes (float)
-  pose1_z     - 4 bytes (float)
-  pose1_qw    - 4 bytes (float)
-  pose1_qx    - 4 bytes (float)
-  pose1_qy    - 4 bytes (float)
-  pose1_qz    - 4 bytes (float)
-  pose1_error - 4 bytes (float)
-  pose2_x     - 4 bytes (float)
-  pose2_y     - 4 bytes (float)
-  pose2_z     - 4 bytes (float)
-  pose2_qw    - 4 bytes (float)
-  pose2_qx    - 4 bytes (float)
-  pose2_qy    - 4 bytes (float)
-  pose2_qz    - 4 bytes (float)
-  pose2_error - 4 bytes (float)
+  time_since_data - 4 bytes (float)
+  pose1_x         - 4 bytes (float)
+  pose1_y         - 4 bytes (float)
+  pose1_z         - 4 bytes (float)
+  pose1_qw        - 4 bytes (float)
+  pose1_qx        - 4 bytes (float)
+  pose1_qy        - 4 bytes (float)
+  pose1_qz        - 4 bytes (float)
+  pose1_error     - 4 bytes (float)
+  pose2_x         - 4 bytes (float)
+  pose2_y         - 4 bytes (float)
+  pose2_z         - 4 bytes (float)
+  pose2_qw        - 4 bytes (float)
+  pose2_qx        - 4 bytes (float)
+  pose2_qy        - 4 bytes (float)
+  pose2_qz        - 4 bytes (float)
+  pose2_error     - 4 bytes (float)
 */
-#define VISION_MESSAGE_SIZE (sizeof(float) * 16)
+#define VISION_MESSAGE_SIZE (sizeof(float) * 17)
 
 void RoboRIOTCPCommHandler::init() {
 SOCKET_CREATE:
@@ -79,7 +80,7 @@ SOCKET_WRITE:
   }
 }
 
-void RoboRIOTCPCommHandler::send_vision_data(frc::Pose3d pose1, double pose1_error, frc::Pose3d pose2, double pose2_error) {
+void RoboRIOTCPCommHandler::send_vision_data(units::second_t time_since_data, frc::Pose3d pose1, double pose1_error, frc::Pose3d pose2, double pose2_error) {
   char buf[VISION_MESSAGE_SIZE];
   char* iter = buf;
   
@@ -88,6 +89,7 @@ void RoboRIOTCPCommHandler::send_vision_data(frc::Pose3d pose1, double pose1_err
     iter += sizeof(float);
   };
   
+  put_float(time_since_data.value());
   put_float(pose1.X().value());
   put_float(pose1.Y().value());
   put_float(pose1.Z().value());
