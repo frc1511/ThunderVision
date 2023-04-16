@@ -47,6 +47,8 @@ public:
   std::string get_game_msg();
   std::size_t get_match_number();
   std::size_t get_replay_number();
+
+  bool is_connected();
   
   inline nt::NetworkTableInstance get_instance() { return nt_inst; }
   

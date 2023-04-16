@@ -83,6 +83,10 @@ std::size_t NTHandler::get_replay_number() {
   return fms_table->GetNumber("ReplayNumber", 0.0);
 }
 
+bool NTHandler::is_connected() {
+  return get_instance().IsConnected();
+}
+
 int32_t NTHandler::get_ctrl_word() {
   return static_cast<int32_t>(fms_table->GetNumber("FMSControlData", 0.0));
 }

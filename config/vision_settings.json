@@ -12,12 +12,14 @@
     {
       "dev" : 0,
       "host_stream" : true,
+      "do_detection" : false,
+      "record" : true,
       "props" : {
         "name" : "intake_camera",
         "model" : "microsoft_lifecam_hd_3000",
         "width" : 640,
         "height" : 480,
-        "fps" : 30,
+        "fps" : 12,
         "transform" : {
           "translation" : {
             "x" : 0.0,

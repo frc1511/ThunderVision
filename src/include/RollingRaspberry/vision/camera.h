@@ -23,6 +23,8 @@ public:
   std::string get_name() const;
   
   inline cs::CvSink& get_sink() { return cv_sink; }
+
+  inline virtual bool should_run_detection() { return false; }
   
 protected:
   void init(cs::VideoCamera* cam);
@@ -52,6 +54,8 @@ public:
   inline bool is_hosting_stream() const { return hosting; }
   
   inline cs::CvSource* get_ouput_source() override { return hosting ? &output_source : nullptr; }
+
+  inline bool should_run_detection() override { return running_detection; }
   
 private:
   cs::UsbCamera usb_camera;
@@ -59,6 +63,7 @@ private:
   int dev;
   
   bool hosting = false;
+  bool running_detection = false;
   cs::CvSource output_source;
 };
 
@@ -71,9 +76,12 @@ public:
    */
   MJPGCameraStream(MJPGCameraProps props);
   ~MJPGCameraStream();
+
+  inline bool should_run_detection() override { return running_detection; }
   
 private:
   cs::HttpCamera http_camera;
   
   std::string url;
+  bool running_detection = false;
 };

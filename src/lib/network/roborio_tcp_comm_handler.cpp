@@ -118,7 +118,7 @@ RETRY_CONNECTION:
   int res = connect(client_fd, (sockaddr*)&server_addr, sizeof(server_addr));
   if (res < 0) {
     fmt::print(FRC1511_LOG_PREFIX "connect() failed: {}\n", strerror(errno));
-    goto RETRY_CONNECTION;
+    // goto RETRY_CONNECTION;
   }
   
   fmt::print(FRC1511_LOG_PREFIX "Connected to server\n");

@@ -28,6 +28,8 @@ void from_json(const wpi::json& json, CameraProps& props);
 struct USBCameraProps {
   std::size_t dev;
   bool host_stream = true;
+  bool do_detection = true;
+  bool record = true;
   CameraProps props;
 };
 
@@ -36,6 +38,8 @@ void from_json(const wpi::json& json, USBCameraProps& props);
 
 struct MJPGCameraProps {
   std::string url;
+  bool do_detection = true;
+  bool record = true;
   CameraProps props;
 };
 

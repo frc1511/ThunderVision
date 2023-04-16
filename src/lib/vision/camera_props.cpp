@@ -26,6 +26,8 @@ void to_json(wpi::json& json, const USBCameraProps& props) {
   json = wpi::json {
     { "dev", props.dev },
     { "host_stream", props.host_stream },
+    { "do_detection", props.do_detection },
+    { "record", props.record },
     { "props", props.props }
   };
 }
@@ -33,17 +35,23 @@ void to_json(wpi::json& json, const USBCameraProps& props) {
 void from_json(const wpi::json& json, USBCameraProps& props) {
   props.dev = json.at("dev").get<int>();
   props.host_stream = json.at("host_stream").get<bool>();
+  props.do_detection = json.at("do_detection").get<bool>();
+  props.record = json.at("record").get<bool>();
   props.props = json.at("props").get<CameraProps>();
 }
 
 void to_json(wpi::json& json, const MJPGCameraProps& props) {
   json = wpi::json {
     { "url", props.url },
+    { "do_detection", props.do_detection },
+    { "record", props.record },
     { "props", props.props }
   };
 }
 
 void from_json(const wpi::json& json, MJPGCameraProps& props) {
   props.url = json.at("url").get<std::string>();
+  props.do_detection = json.at("do_detection").get<bool>();
+  props.record = json.at("record").get<bool>();
   props.props = json.at("props").get<CameraProps>();
 }
