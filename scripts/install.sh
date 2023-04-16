@@ -31,6 +31,11 @@ echo "Installing systemd service 'RollingRaspberry.service'"
 # Install the systemd service.
 cp $PROJECT_DIR/RollingRaspberry.service /etc/systemd/system/RollingRaspberry.service
 
+echo "Installing systemd service 'MountUSBDrive.service'"
+
+# Install the systemd service.
+cp $PROJECT_DIR/MountUSBDrive.service /etc/systemd/system/MountUSBDrive.service
+
 echo 'Reloading systemd daemon'
 
 # Reload the daemon.
@@ -38,9 +43,9 @@ systemctl daemon-reload
 
 # Enable the systemd service.
 while true; do
-  read -p 'Enable and start the systemd service? (y/n) ' yn
+  read -p 'Enable and start the systemd services? (y/n) ' yn
   case $yn in
-    [Yy]* ) systemctl enable RollingRaspberry.service && systemctl start RollingRaspberry.service; break;;
+    [Yy]* ) systemctl enable RollingRaspberry.service && systemctl start RollingRaspberry.service && systemctl enable MountUSBDrive.service && systemctl start MountUSBDrive.service; break;;
     [Nn]* ) break;;
     * ) echo 'Please answer y or n';;
   esac
