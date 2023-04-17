@@ -25,6 +25,7 @@ public:
   inline cs::CvSink& get_sink() { return cv_sink; }
 
   inline virtual bool should_run_detection() { return false; }
+  inline virtual bool should_record() { return false; }
   
 protected:
   void init(cs::VideoCamera* cam);
@@ -56,6 +57,8 @@ public:
   inline cs::CvSource* get_ouput_source() override { return hosting ? &output_source : nullptr; }
 
   inline bool should_run_detection() override { return running_detection; }
+
+  inline bool should_record() override { return recording; }
   
 private:
   cs::UsbCamera usb_camera;
@@ -64,6 +67,7 @@ private:
   
   bool hosting = false;
   bool running_detection = false;
+  bool recording = false;
   cs::CvSource output_source;
 };
 
@@ -78,10 +82,13 @@ public:
   ~MJPGCameraStream();
 
   inline bool should_run_detection() override { return running_detection; }
+
+  inline bool should_record() override { return recording; }
   
 private:
   cs::HttpCamera http_camera;
   
   std::string url;
   bool running_detection = false;
+  bool recording = false;
 };

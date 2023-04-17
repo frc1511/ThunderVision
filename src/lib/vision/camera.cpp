@@ -24,7 +24,7 @@ std::string CameraStream::get_name() const {
 // --- USBCameraStream ---
 
 USBCameraStream::USBCameraStream(USBCameraProps _props)
-: CameraStream(_props.props), usb_camera(props.name, _props.dev), dev(_props.dev), running_detection(_props.do_detection) {
+: CameraStream(_props.props), usb_camera(props.name, _props.dev), dev(_props.dev), running_detection(_props.do_detection), recording(_props.record) {
   init(&usb_camera);
 
   if (_props.host_stream) {
@@ -44,7 +44,7 @@ void USBCameraStream::host_stream() {
 // --- MJPGCameraStream ---
 
 MJPGCameraStream::MJPGCameraStream(MJPGCameraProps _props)
-: CameraStream(_props.props), http_camera(props.name, _props.url, cs::HttpCamera::HttpCameraKind::kMJPGStreamer), url(_props.url), running_detection(_props.do_detection) {
+: CameraStream(_props.props), http_camera(props.name, _props.url, cs::HttpCamera::HttpCameraKind::kMJPGStreamer), url(_props.url), running_detection(_props.do_detection), recording(_props.record) {
   init(&http_camera);
 }
 

@@ -102,11 +102,13 @@ private:
   
   bool thread_running = false;
   bool thread_terminated = true;
-
+  
   std::filesystem::path image_path;
   uint64_t image_num = 0;
-
+  
   std::vector<int> quality_params { cv::IMWRITE_JPEG_QUALITY, 50 };
+  
+  bool usb_device_connected = false;
   
   std::thread module_thread;
   mutable std::mutex module_mutex;

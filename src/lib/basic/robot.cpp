@@ -5,7 +5,7 @@
 
 Robot::Robot() {
   Clock::init();
-  RoboRIOTCPCommHandler::get()->init();
+  /* RoboRIOTCPCommHandler::get()->init(); */
 }
 
 Robot::~Robot() { }
@@ -15,7 +15,7 @@ void Robot::robot_process() {
     s->send_feedback();
   }
 
-  RoboRIOTCPCommHandler::get()->process();
+  /* RoboRIOTCPCommHandler::get()->process(); */
   vision.process();
 }
 

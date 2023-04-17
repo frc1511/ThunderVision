@@ -14,7 +14,7 @@ public:
    *
    * @return The starting time point.
    */
-  static constexpr TimePoint get_start_time_point() { return start_time_point; }
+  static inline TimePoint get_start_time_point() { return start_time_point; }
   
   /**
    * @brief Returns the uptime of the Raspberry Pi.

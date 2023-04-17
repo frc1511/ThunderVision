@@ -2,6 +2,8 @@
 #include <frc/apriltag/AprilTagDetector_cv.h>
 #include <RollingRaspberry/network/nt_handler.h>
 
+static const std::filesystem::path RECORDING_PATH("/media/usb/recordings");
+
 VisionModule::VisionModule(CameraStream* stream, const VisionSettings* settings)
 : settings(settings), cam_stream(stream), cam_props(&cam_stream->get_props()),
   robot_to_camera(cam_props->robot_to_camera),
@@ -18,10 +20,8 @@ VisionModule::VisionModule(CameraStream* stream, const VisionSettings* settings)
   // month_day_year__hour_min
   std::string date = fmt::format("{}_{}_{}__{}_{}", curr_time->tm_mon + 1, curr_time->tm_mday, curr_time->tm_year + 1900, curr_time->tm_hour, curr_time->tm_min);
 
-  image_path = std::filesystem::current_path() / "recordings" / date / cam_props->name;
-
-  std::filesystem::create_directories(image_path);
-  fmt::print("image_path: {}\n", image_path.string());
+  // When running as a systemd service, current_path() is root.
+  image_path = RECORDING_PATH / date / cam_props->name;
 }
 
 VisionModule::~VisionModule() {
@@ -102,18 +102,35 @@ void VisionModule::thread_start() {
       continue;
     }
     
+    if (cam_stream->should_record()) {
+      bool was_usb_device_connected = usb_device_connected;
+      usb_device_connected = std::filesystem::exists(RECORDING_PATH);
+      if (!was_usb_device_connected && usb_device_connected) {
+        std::filesystem::create_directories(image_path);
+      }
+      if (!usb_device_connected) {
+        fmt::print("Valid USB device not mounted.\n");
+      }
+    }
+    
     std::uint64_t frame_res = cam_stream->get_frame(frame_undistorted);
     Clock::TimePoint frame_time_point = Clock::get_time_point();
     
     // Successfully grabbed a frame.
     if (frame_res) {
-      std::string filename = fmt::format("{}/{}.jpg", image_path.string(), image_num++);
-      cv::imwrite(filename, frame_undistorted, quality_params);
-      fmt::print("saved to {}\n", filename);
+      // Save current frame to image file.
+      if (cam_stream->should_record()) {
+        std::string filename = fmt::format("{}/{}.jpg", image_path.string(), image_num++);
+        
+        if (!usb_device_connected) {
+          cv::imwrite(filename, frame_undistorted, quality_params);
+        }
+      }
 
       // Output stream (optional - may be nullptr).
       cs::CvSource* output_stream = cam_stream->get_ouput_source();
 
+      // Run AprilTag detection.
       if (cam_stream->should_run_detection()) {
         cv::cvtColor(frame_undistorted, frame_gray, cv::COLOR_RGB2GRAY);
         
@@ -152,6 +169,7 @@ void VisionModule::thread_start() {
         }
       }
       
+      // Host image.
       if (output_stream) {
         output_stream->PutFrame(frame_undistorted);
       }
