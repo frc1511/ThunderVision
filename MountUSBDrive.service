@@ -3,7 +3,7 @@ Description=1511 Mount USB Drive Service
 [Service]
 Type=simple
 ExecStart=/usr/bin/bash -c /home/pi/RollingRaspberry/scripts/setup_drive.sh
-Restart=on-failure
+Restart=always
 RestartSec=10
 KillMode=process
 [Install]
