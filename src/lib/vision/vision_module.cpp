@@ -122,7 +122,7 @@ void VisionModule::thread_start() {
       if (cam_stream->should_record()) {
         std::string filename = fmt::format("{}/{}.jpg", image_path.string(), image_num++);
         
-        if (!usb_device_connected) {
+        if (usb_device_connected) {
           cv::imwrite(filename, frame_undistorted, quality_params);
         }
       }
