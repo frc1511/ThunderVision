@@ -22,6 +22,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   set(THUNDER_DEBUG ON)
 endif()
 
+set(CLIENT_DIR     "${CMAKE_CURRENT_SOURCE_DIR}/client")
 set(SERVER_DIR     "${CMAKE_CURRENT_SOURCE_DIR}/server")
 set(THIRDPARTY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty")
 set(TOOLS_DIR      "${CMAKE_CURRENT_SOURCE_DIR}/tools")
@@ -56,7 +57,6 @@ if(APPLE)
                                          "-framework CoreVideo")
 endif()
 
-
 #
 # pthread
 #
@@ -65,6 +65,11 @@ find_package(Threads REQUIRED)
 if(NOT Threads_FOUND)
   message(FATAL_ERROR "Pthread not found.")
 endif()
+
+#
+# Build client.
+#
+add_subdirectory(${CLIENT_DIR})
 
 #
 # Build server.

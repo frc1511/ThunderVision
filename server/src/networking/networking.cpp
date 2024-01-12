@@ -104,7 +104,7 @@ void Networking::process() {
       if (errno != EWOULDBLOCK && errno != EAGAIN) {
         fprintf(stderr, ERROR_TAG "Failed to read from client: %s\n",
                 strerror(errno));
-        fputs(ERROR_TAG "Closing connection to client", stderr);
+        fputs(ERROR_TAG "Closing connection to client\n", stderr);
         m_connected = false;
         close(m_client_fd);
       }
@@ -123,6 +123,9 @@ void Networking::send_poses(const std::vector<frc::Pose3d>& poses) {
   if (bytes_sent < 0) {
     fprintf(stderr, ERROR_TAG "Failed to write to client: %s\n",
             strerror(errno));
+    fputs(ERROR_TAG "Closing connection to client\n", stderr);
+    m_connected = false;
+    close(m_client_fd);
     return;
   }
 }
