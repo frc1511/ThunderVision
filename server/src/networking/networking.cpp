@@ -58,11 +58,12 @@ socket_listen:
 }
 
 Networking::~Networking() {
-  close(m_server_fd);
-
   if (m_connected) {
+    puts(NETWORKING_TAG "Closing connection to client");
     close(m_client_fd);
   }
+
+  close(m_server_fd);
 }
 
 void Networking::process() {
@@ -93,31 +94,17 @@ void Networking::process() {
       m_client_addr = new_client_addr;
     }
   }
-
-  if (!m_connected) return;
-
-  // A dummy read to check if the client is still connected.
-  {
-    char buffer[1];
-    ssize_t bytes_received = read(m_client_fd, buffer, sizeof(buffer));
-    if (bytes_received < 0) {
-      if (errno != EWOULDBLOCK && errno != EAGAIN) {
-        fprintf(stderr, ERROR_TAG "Failed to read from client: %s\n",
-                strerror(errno));
-        fputs(ERROR_TAG "Closing connection to client\n", stderr);
-        m_connected = false;
-        close(m_client_fd);
-      }
-    }
-  }
 }
 
 void Networking::send_poses(const std::vector<frc::Pose3d>& poses) {
   if (!m_connected) return;
-  if (poses.empty()) return;
 
-  const void* buffer = poses.data();
-  const size_t buffer_size = sizeof(frc::Pose3d) * poses.size();
+  // Send 1 byte regardless of whether or not we have any poses to send.
+  // This is to check whether or not the client is still connected.
+
+  char buffer[2048];
+  std::memcpy(buffer + 1, poses.data(), sizeof(frc::Pose3d) * poses.size());
+  const size_t buffer_size = 1 + sizeof(frc::Pose3d) * poses.size();
 
   ssize_t bytes_sent = write(m_client_fd, buffer, buffer_size);
   if (bytes_sent < 0) {

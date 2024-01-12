@@ -10,6 +10,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include <csignal>
+
 // Milliseconds since epoch...
 static int64_t get_timestamp() {
   const auto time_since_epoch =
@@ -25,7 +27,11 @@ ThunderVisionClient::ThunderVisionClient(const char* server_address,
   : m_server_address(server_address),
     m_server_port(server_port),
     m_cutoff_time(cutoff_time),
-    m_thread([this]() { this->thread_main(); }) {}
+    m_thread([this]() { this->thread_main(); }) {
+
+  // Broken pipes are expected, so ignore signal.
+  std::signal(SIGPIPE, [](int32_t signal) {});
+}
 
 ThunderVisionClient::~ThunderVisionClient() {
   {
@@ -74,6 +80,12 @@ void ThunderVisionClient::thread_main() {
   unsigned char buffer[2048];
   std::memset(buffer, 0, sizeof(buffer));
 
+  const auto reset_connection = [&]() {
+    close(client_fd);
+    client_fd = -1;
+    connected = false;
+  };
+
   while (true) {
     {
       std::lock_guard<std::mutex> lk(m_terminated_mutex);
@@ -87,10 +99,6 @@ void ThunderVisionClient::thread_main() {
       client_fd = socket(AF_INET, SOCK_STREAM, 0);
       if (client_fd < 0) continue;
 
-      // Enable non-blocking io.
-      int flags = fcntl(client_fd, F_GETFL, 0);
-      fcntl(client_fd, F_SETFL, flags | O_NONBLOCK);
-
       // Server address.
       server_addr.sin_family = AF_INET,
       server_addr.sin_port = htons(m_server_port);
@@ -100,53 +108,81 @@ void ThunderVisionClient::thread_main() {
 
     // Connect to the server!
     if (!connected) {
-    connect:
       int res = connect(client_fd, (struct sockaddr*)&server_addr,
                         sizeof(server_addr));
       if (res < 0) {
-        if (errno == EINPROGRESS) goto connect;
+        static int last_error = 0;
+        if (last_error != errno) {
+          printf("[ThunderVision] Failed to connect to server: %s\n",
+                 strerror(errno));
+          last_error = errno;
+        }
+        reset_connection();
         continue;
-      } else
+      } else {
+        connected = true;
         printf("[ThunderVision] Connected to server!\n");
+
+        // Enable non-blocking io.
+        int flags = fcntl(client_fd, F_GETFL, 0);
+        fcntl(client_fd, F_SETFL, flags | O_NONBLOCK);
+      }
+    }
+
+    // Send dummy byte to check connection.
+    {
+      char dummy = 0;
+      int res = write(client_fd, &dummy, 1);
+      if (res < 0) {
+        if (errno != EWOULDBLOCK && errno != EAGAIN) {
+          printf("[ThunderVision] Failed to write to server: %s\n",
+                 strerror(errno));
+          printf("[ThunderVision] Resetting connection to server...\n");
+
+          reset_connection();
+          continue;
+        }
+      }
     }
 
     const int64_t timestamp = get_timestamp();
 
     ssize_t bytes_read = read(client_fd, buffer, sizeof(buffer));
-    if (bytes_read < 0) {
+    if (bytes_read <= 0) {
       if (errno == EWOULDBLOCK || errno == EAGAIN) continue;
 
       printf("[ThunderVision] Failed to read from server: %s\n",
              strerror(errno));
       printf("[ThunderVision] Resetting connection to server...\n");
 
-      close(client_fd);
-      client_fd = -1;
-      connected = false;
+      reset_connection();
       continue;
     }
 
+    // No poses.
+    else if (bytes_read == 1)
+      continue;
+
     // Read poses!
-    if (bytes_read % sizeof(frc::Pose3d) != 0) {
+    if ((bytes_read - 1) % sizeof(frc::Pose3d) != 0) {
       printf("[ThunderVision] Invalid buffer size read from server!\n");
       continue;
     }
 
-    const size_t num_poses = bytes_read / sizeof(frc::Pose3d);
+    const size_t num_poses = (bytes_read - 1) / sizeof(frc::Pose3d);
     const std::vector<frc::Pose3d> poses(
-        reinterpret_cast<frc::Pose3d*>(buffer),
-        reinterpret_cast<frc::Pose3d*>(buffer) + num_poses);
+        reinterpret_cast<frc::Pose3d*>(buffer + 1),
+        reinterpret_cast<frc::Pose3d*>(buffer + 1) + num_poses);
 
     {
       std::lock_guard<std::mutex> lk(m_poses_mutex);
       m_poses.push_back({timestamp, std::move(poses)});
     }
-
-    std::memset(buffer, 0, sizeof(buffer));
   }
 
+  // Cleanup.
   if (client_fd >= 0) {
     close(client_fd);
   }
 }
- 
+

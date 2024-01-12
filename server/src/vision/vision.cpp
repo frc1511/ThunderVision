@@ -42,7 +42,6 @@ void Vision::process() {
     m_detections.clear();
     detections;
   });
-  if (detections.empty()) return;
 
   std::vector<frc::Pose3d> robot_poses;
 
@@ -53,6 +52,7 @@ void Vision::process() {
     if (robot_pose) robot_poses.push_back(*robot_pose);
   }
 
+  // NOTE: Send even if empty to verify that the client is still connected!
   m_networking.send_poses(robot_poses);
 }
 
@@ -94,7 +94,12 @@ Vision::calculate_robot_pose(const Detection& detection) const {
 
   // Not ambiguous.
   if (!is_ambiguous) {
-    return estimate.error1 < estimate.error2 ? pose_1 : pose_2;
+    frc::Pose3d good_pose = estimate.error1 < estimate.error2 ? pose_1 : pose_2;
+
+    /* if (validate_robot_pose(good_pose)) return good_pose; */
+    /* return std::nullopt; */
+
+    return good_pose;
   }
 
   // Ambiguous D:

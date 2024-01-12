@@ -19,7 +19,6 @@ int main(int argc, const char** argv) {
   std::signal(SIGINT, signal_handler);
   std::signal(SIGTERM, signal_handler);
 
-
   const char* server_address = "127.0.0.1";
   const int server_port = 5802;
 
@@ -34,9 +33,11 @@ int main(int argc, const char** argv) {
     poses = client.get_latest_poses();
 
     if (!poses.empty()) {
+      printf("{\n");
       for (const auto& pose : poses) {
-        printf("Pose: %f %f %f\n", pose.X().value(), pose.Y().value(), pose.Z().value());
+        printf("   %f %f %f\n", pose.X().value(), pose.Y().value(), pose.Z().value());
       }
+      printf("}\n");
     }
 
     const auto frame_end = std::chrono::high_resolution_clock::now();
