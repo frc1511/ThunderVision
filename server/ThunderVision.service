@@ -1,0 +1,10 @@
+[Unit]
+Description=1511 ThunderVision Service
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/ThunderVision
+Restart=on-failure
+RestartSec=10
+KillMode=process
+[Install]
+WantedBy=multi-user.target

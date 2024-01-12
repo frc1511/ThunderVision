@@ -1,0 +1,10 @@
+[Unit]
+Description=1511 Mount USB Drive Service
+[Service]
+Type=simple
+ExecStart=/usr/bin/bash -c /home/pi/ThunderVision/server/scripts/setup_drive.sh
+Restart=always
+RestartSec=10
+KillMode=process
+[Install]
+WantedBy=multi-user.target

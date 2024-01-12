@@ -1,0 +1,68 @@
+{
+  "apriltag_family": "tag36h11",
+  "apriltag_size": 0.1524,
+  "field_layout": "2024-crescendo",
+  "min_decision_margin": 100.0,
+  "pose_estimate_iterations": 50,
+  "max_frame_delay": 0.25,
+  "max_elevation": 0.0,
+  "pose_tolerance": 0.1,
+
+
+  "vision_modules": [
+    {
+      "name": "intake_camera",
+      "robot_to_camera": {
+        "translation": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "rotation": {
+          "quaternion": {
+            "W": 1.0,
+            "X": 0.0,
+            "Y": 0.0,
+            "Z": 0.0
+          }
+        }
+      },
+      "fps": 10,
+      "detect_apriltags": true,
+      "record": true,
+      "record_path": "images",
+
+      "camera": "lifecam_480p",
+      "stream_type": "usb",
+      "device_id": 1,
+      "host": true
+    },
+    {
+      "name": "intake_camera2",
+      "robot_to_camera": {
+        "translation": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "rotation": {
+          "quaternion": {
+            "W": 1.0,
+            "X": 0.0,
+            "Y": 0.0,
+            "Z": 0.0
+          }
+        }
+      },
+      "fps": 10,
+      "detect_apriltags": true,
+      "record": true,
+      "record_path": "images",
+
+      "camera": "lifecam_480p",
+      "stream_type": "usb",
+      "device_id": 2,
+      "host": true
+    }
+  ]
+}

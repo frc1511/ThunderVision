@@ -1,0 +1,11 @@
+add_thunder_sources(
+  "${SRC_DIR}/main.cpp"
+  "${SRC_DIR}/config.cpp"
+  "${SRC_DIR}/vision/vision_config.cpp"
+  "${SRC_DIR}/vision/vision_module_config.cpp"
+  "${SRC_DIR}/vision/camera_model.cpp"
+  "${SRC_DIR}/vision/vision.cpp"
+  "${SRC_DIR}/vision/camera_stream.cpp"
+  "${SRC_DIR}/networking/networking_config.cpp"
+  "${SRC_DIR}/networking/networking.cpp"
+)

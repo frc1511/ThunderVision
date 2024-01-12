@@ -1,5 +1,5 @@
-# Rolling Raspberry
+# ThunderVision
 
-RollingRaspberry is a program for Raspberry Pi co-processors on robots. It's main purpose is to handle Vision Processing with AprilTags.
+ThunderVision is software designed by FRC team 1511 to run on Raspberry Pi co-processors. It's main purpose is to handle vision processing with AprilTags.
 
-For information about Rolling Raspberry, see [here](https://frc1511.github.io/1511_software/rollingraspberry/).
+For information about ThunderVision, see [here](https://frc1511.github.io/1511_software/thundervision/).
